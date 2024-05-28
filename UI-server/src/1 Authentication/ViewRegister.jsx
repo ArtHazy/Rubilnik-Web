@@ -1,15 +1,15 @@
-import { limits } from './limits.mjs';
-import { SERVER_URL } from './main.jsx';
+import { limits } from '../values.mjs';
+import { getSelf, putSelf } from "../functions.mjs"
 
 export const ViewRegister = () => 
-    JSON.parse(localStorage.getItem('self-user'))? window.location.href='/' :
+    getSelf()? window.location.href='/' :
     <div className='ViewRegister'>
         <div className="register-block">
             
-            <div className="hstack">
+            <hstack>
                 <div className='reg accent'>REG</div>
                 <div className='ister accent'>ISTER</div>
-            </div>
+            </hstack>
 
             <div>
                 <input id="username-input" type="text" placeholder='username' maxLength={limits.maxNameLength} />
@@ -31,26 +31,28 @@ export const ViewRegister = () =>
                 let password = document.getElementById('password-input').value;
                 let email = document.getElementById('email-input').value;
 
+                putSelf({username, password, email}) //! FOR TESTING
+                window.location.reload() //! FOR TESTING
                 
-                fetch(SERVER_URL+'/user', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: username, email: email, password: password
-                    })
-                }).then(res => {
-                    res.json().then(json =>{
-                        console.log(json);
-                        res.ok ? (
-                            localStorage.setItem('self-user', JSON.stringify(json)), window.location.href='/',
-                            alert ('registered')
-                            ) : alert('error')
-                    })
-                }).catch(e => {
-                    alert(e.message)
-                    load.remove()
-                    submit.hidden = false
-                })
+                // fetch(SERVER_URL+'/user', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({
+                //         name: username, email: email, password: password
+                //     })
+                // }).then(res => {
+                //     res.json().then(json =>{
+                //         console.log(json);
+                //         res.ok ? (
+                //             putSelf(json), window.location.href='/',
+                //             alert ('registered')
+                //             ) : alert('error')
+                //     })
+                // }).catch(e => {
+                //     alert(e.message)
+                //     load.remove()
+                //     submit.hidden = false
+                // })
 
             }}>Register</button>
             <div className='spacer-default'/>

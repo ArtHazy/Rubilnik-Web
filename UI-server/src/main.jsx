@@ -1,26 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
+import App from './2 App/App.jsx'
 import './main.scss'
 import { createBrowserRouter,RouterProvider} from "react-router-dom";
-import { ViewLogin } from './ViewLogin.jsx';
-import { ViewRegister } from './ViewRegister.jsx';
+import { ViewLogin } from './1 Authentication/ViewLogin.jsx';
+import { ViewRegister } from './1 Authentication/ViewRegister.jsx';
+import { ViewQuizEdit } from './2 App/ViewQuizEdit.jsx';
 
-export const SERVER_URL = "http://192.168.0.7:3000"
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-  },
-  {
-    path: "/login",
-    element: <ViewLogin />,
-  },
-  {
-    path: "/register",
-    element: <ViewRegister />,
-  },
+  { path: "/", element: <App/> },
+  { path: "/login", element: <ViewLogin/> },
+  { path: "/register", element: <ViewRegister/> },
+  { path: "/edit-quiz/:ind", element: <ViewQuizEdit/> },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
