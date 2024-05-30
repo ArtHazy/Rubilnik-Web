@@ -13,6 +13,7 @@ export function downloadObj(obj, title){
 export const putSelf = (self)=>{localStorage.setItem('self', JSON.stringify(self))}
 export const getSelf = ()=>JSON.parse(localStorage.getItem('self'));
 export const validateSelf = (self)=>{
+    //!
 }
 
 export function replaceValues(objReceiver, objGiver){
