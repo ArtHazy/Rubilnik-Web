@@ -2,22 +2,22 @@ import { useEffect, useState } from "react"
 
 export const ViewResult = ({usersChoices, isHost, roomId, socket, quiz, roommates}) => {
 
-  // const [usersScores, setUsersScores] = useState([])
-  const [usersScores, setUsersScores] = useState([{userId:'AAAA',userScore:12}]) //! FOR TEST
+  const [usersScores, setUsersScores] = useState([])
 
-  // useEffect(() => {
-  //   socket.on('scores',({usersScores})=>{
-  //     console.log('scores received', usersScores);
-  //     setUsersScores(usersScores)
-  //   })
-  //   if (isHost) {
-  //     let correctChoices = getCorrectChoices()
-  //     console.log('correctChoices', correctChoices);
-  //     let usersScores = calculateScores(usersChoices, correctChoices)
-  //     usersScores.sort((a,b)=>a.userScore - b.userScore)
-  //     socket.emit('scores', {roomId, usersScores})
-  //   }
-  // },[])
+  useEffect(() => {
+    socket.on('scores',({usersScores})=>{
+      console.log('scores received', usersScores);
+      setUsersScores(usersScores)
+    })
+    if (isHost) {
+      let correctChoices = getCorrectChoices()
+      console.log('correctChoices', correctChoices);
+      let usersScores = calculateScores(usersChoices, correctChoices)
+      usersScores.sort((a,b)=>b.userScore - a.userScore)
+      
+      setTimeout(()=>socket.emit('scores', {roomId, usersScores}), 500) 
+    }
+  },[])
 
   return (
     <div className="ViewResult">
@@ -34,14 +34,6 @@ export const ViewResult = ({usersChoices, isHost, roomId, socket, quiz, roommate
       </div>
     </div>
   )
-
-
-
-
-
-
-
-  
 
   function getCorrectChoices(){
     let correctChoices = quiz.questions.map((question)=> {

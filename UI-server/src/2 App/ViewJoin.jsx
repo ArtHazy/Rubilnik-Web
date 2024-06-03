@@ -1,18 +1,23 @@
+import { useState } from "react"
 import { getSelf, putSelf } from "../functions.mjs"
 import { limits } from "../values.mjs"
 
 export const ViewJoin = () => {
-    const self = getSelf()
+    let self = getSelf();
+    if (!self) self = {}
+    console.log(self);
+
     return <div className="ViewJoin">
         <header>ViewJoin</header>
         <div className="form">
-            <vstack>name:<input id='name' type="text" value={self?.name} maxLength={limits.maxNameLength} onChange={(e)=>{self.name = e.target.value, putSelf(self)}} /></vstack>
+            <vstack>name:<input id='name' type="text" value={self.name} maxLength={limits.maxNameLength} onChange={(e)=>{self.name = e.target.value, putSelf(self)}} /></vstack>
             <vstack>key:<RoomKeyInput/></vstack>
             <button style={{width:"100%"}} onClick={(e)=>{navigatePlay()}}>join</button>
         </div>
     </div>
 
     function navigatePlay(){
+        putSelf(self)
         let inputs = document.querySelector('.RoomKeyInput')
         let roomkey = ''
         inputs.childNodes.forEach((child)=>{
