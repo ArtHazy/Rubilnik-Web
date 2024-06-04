@@ -11,11 +11,16 @@ export const Play = () => {
     const {state} = useLocation()
     const {roomId} = useParams()
     
-    const [socket, setSocket] = useState(null)
-    const [joined, setJoined] = useState(false)
+    // const [socket, setSocket] = useState(null)
+    const [socket, setSocket] = useState({connected:true}) //! FOR TEST
+    // const [joined, setJoined] = useState(false)
+    const [joined, setJoined] = useState(true) //! FOR TEST
+
     const [roommates, setRoommates] = useState({})
     const [self, setSelf] = useState(getSelf())
-    const [isAuthorized, setIsAuthorized] = useState(validateSelf(self))
+    // const [isAuthorized, setIsAuthorized] = useState(validateSelf(self))
+    const isAuthorized = true //! FOR TEST
+
     const isHost = state? true : false
     const gameStates = ['lobby', 'live', 'finished']
     const [gameState, setGameState] = useState(gameStates[0])
@@ -27,41 +32,41 @@ export const Play = () => {
   
     if (isHost && !isAuthorized) { return <div>You're not authorized</div> }
     
-    useEffect(() =>{
-      const usersChoices_temp = {}
-      let socket = io(CORE_SERVER_URL)
-      setSocket(socket)
+    // useEffect(() =>{
+    //   const usersChoices_temp = {}
+    //   let socket = io(CORE_SERVER_URL)
+    //   setSocket(socket)
   
-      let userName = self.name
-      let userId = self.id
+    //   // let userName = self.name
+    //   // let userId = self.id
 
-      socket.emit(isHost? 'create' : 'join', {roomId, userName, userId, quizLength} )
+    //   socket.emit(isHost? 'create' : 'join', {roomId, userName, userId, quizLength} )
 
-      socket.on('join', ({userName, userId, roommates})=>{setRoommates(roommates)});
-      socket.on('leave', ({userName, userId, socketId, roommates})=>{setRoommates(roommates)});
-      socket.on('bark', ({msg}) => { setTimeout(()=>{alert(msg)}, 1) } );
-      socket.on('create',()=>{});
-      socket.on('start',()=>{console.log('Play got start'); setGameState(gameStates[1])})
-      // socket.on('next',()=>{console.log('Play got next'); setGameState(gameStates[1])})
-      socket.on('end',({})=>{setUsersChoices(usersChoices_temp); setGameState(gameStates[2])})
-      socket.on('joined',({roommates, guestId, quizLength, e})=>{
-        console.log(quizLength);
-        setE(e); putSelf(self), setRoommates(roommates), setQuizLength(quizLength), setJoined(true)
-      })
-      console.log('isAuthorized', isAuthorized);
-      !isAuthorized? socket.on('disconnect',()=>{ delete self.id, putSelf(self)}) : null
+    //   socket.on('join', ({userName, userId, roommates})=>{setRoommates(roommates)});
+    //   socket.on('leave', ({userName, userId, socketId, roommates})=>{setRoommates(roommates)});
+    //   socket.on('bark', ({msg}) => { setTimeout(()=>{alert(msg)}, 1) } );
+    //   socket.on('create',()=>{});
+    //   socket.on('start',()=>{console.log('Play got start'); setGameState(gameStates[1])})
+    //   // socket.on('next',()=>{console.log('Play got next'); setGameState(gameStates[1])})
+    //   socket.on('end',({})=>{setUsersChoices(usersChoices_temp); setGameState(gameStates[2])})
+    //   socket.on('joined',({roommates, guestId, quizLength, e})=>{
+    //     console.log(quizLength);
+    //     setE(e); putSelf(self), setRoommates(roommates), setQuizLength(quizLength), setJoined(true)
+    //   })
+    //   console.log('isAuthorized', isAuthorized);
+    //   !isAuthorized? socket.on('disconnect',()=>{ delete self.id, putSelf(self)}) : null
   
-      // map player's choices for later evaluation
-      if (isHost){
-        socket.on('choice',({userId, questionInd, choices})=>{
-          !usersChoices_temp[userId]? usersChoices_temp[userId] = [] : null
-          usersChoices_temp[userId][questionInd] = choices
-          console.log('usersChoices:', usersChoices_temp)
-        })
-      }
+    //   // map player's choices for later evaluation
+    //   if (isHost){
+    //     socket.on('choice',({userId, questionInd, choices})=>{
+    //       !usersChoices_temp[userId]? usersChoices_temp[userId] = [] : null
+    //       usersChoices_temp[userId][questionInd] = choices
+    //       console.log('usersChoices:', usersChoices_temp)
+    //     })
+    //   }
 
-      return () => {socket.off(), socket.disconnect();};
-    }, []);
+    //   return () => {socket.off(), socket.disconnect();};
+    // }, []);
 
 
     if (!socket || !socket.connected) return <div>failed to connect<button onClick={()=>{window.location.reload()}}>retry</button></div>

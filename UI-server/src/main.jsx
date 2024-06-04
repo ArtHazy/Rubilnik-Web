@@ -22,10 +22,10 @@ const router = createBrowserRouter([
   { path: "/join", element: <ViewJoin/> },
 
   //! FOR TESTING
-    // { path: "/test/p", element: <Play/> },  
-    // { path: "/test/q", element: <ViewQuestion/> }, 
-    // { path: "/test/l", element: <ViewLobby/> },  
-    // { path: "/test/r", element: <ViewResult/> },  
+    { path: "/test/p", element: <Play/> },  
+    { path: "/test/q", element: <ViewQuestion isHost={false} socket={{connected:true}} quiz={{questions:[{text:'title1', choices:[{text:'choice1'},{text:'choice2'},{text:'choice3'},{text:'choice4'}]},  {text:'title2',choices:[{text:'choice1', isCorrect:true},{text:'choice2'},{text:'choice3'}]}]}} quizLength={2} roomId={'OOOO'}/> }, 
+    { path: "/test/l", element: <ViewLobby roomId={'AAAA'} socket={{connected:true}} /> },  
+    { path: "/test/r", element: <ViewResult roommates={{id:'AAAA',name:'test'}}/> },  
   //!
 ]);
 
