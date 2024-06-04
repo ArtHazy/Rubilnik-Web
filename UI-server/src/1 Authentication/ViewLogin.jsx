@@ -5,7 +5,9 @@ export const ViewLogin = () =>
     validateSelf(getSelf())? window.location.href='/' :
         <div className='ViewLogin'>
             <div className='login-block'>
-                <hstack><div className='log accent'>LOG</div><div className='in accent'>IN</div></hstack>
+                <div className='hstack'>
+                    <div className='log accent'>LOG</div><div className='in accent'>IN</div>
+                </div>
                 <div>
                     <input id="email-input" type="email" placeholder='email' maxLength={limits.maxEmailLength} />
                     <div className='spacer-default'></div>
