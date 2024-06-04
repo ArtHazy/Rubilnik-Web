@@ -31,10 +31,10 @@ export const ViewQuizEdit = () => {
             {questions.length<limits.maxQuestionsLength? <button onClick={()=>{questions.push({title:'new'}), upd()}}><span className="material-symbols-outlined">add</span></button>:null}
         </div>
         <Actions>
-        <button onClick={()=>{navigate(`/play/${user.id}`, {state: {quiz, ind: quizInd}})}}><span class="material-symbols-outlined">play_arrow</span></button>
             <button onClick={()=>{downloadObj(quiz, quiz.title)}}><span class="material-symbols-outlined">download</span></button>
             <label htmlFor="file-input"><button onClick={()=>{document.getElementById("file-input").click()}} ><span class="material-symbols-outlined">upload</span></button></label>
             <input style={{display:"none"}} id="file-input" type="file" onChange={(e)=>{loadQuizFromFile(e.target.files[0], upd)}}/>
+            <button onClick={()=>{navigate(`/play/${user.id}`, {state: {quiz, ind: quizInd}})}}><span class="material-symbols-outlined">play_arrow</span></button>
         </Actions>
     </div>
 }
