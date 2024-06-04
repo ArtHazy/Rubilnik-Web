@@ -196,13 +196,18 @@ body,#root {
     @include grid();
     max-width: 20cm;
     grid-template-columns: 1fr;
-    .question,.choice{
+    div.question,.choice{
       @include grid();
       padding: 0;
       grid-template-columns: 1fr 5fr 1fr;
+      button.question{
+        grid-area: 2/1/3/4;
+        width: 100%;
+        z-index: 0;
+      }
     }
     .choices{
-      @include scrollbar-visible();
+      @include scrollbar-hidden();
       width: 100%;
       position: relative;
       height: 0;

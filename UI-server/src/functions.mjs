@@ -21,7 +21,8 @@ export function replaceValues(objReceiver, objGiver){
     Object.keys(objGiver).forEach((key)=>{ objReceiver[key] = objGiver[key]; })
 }
 
-export function loadQuizFromFile(file, upd){
+export function loadQuizFromFile(file, quiz, upd){
+    alert('Loading quiz')
     console.log(file);
     if (file instanceof File) {
         if (file.size>limits.maxQuizFileSise) { alert('file size is too big') }
@@ -33,6 +34,7 @@ export function loadQuizFromFile(file, upd){
                 console.log(file.size, ft.byteLength);
                 let loadedQuiz = JSON.parse(ft)
                 replaceValues(quiz, loadedQuiz)
+                alert('quiz: ', quiz);
                 upd()
             }
         }
