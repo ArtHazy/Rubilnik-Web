@@ -7,7 +7,7 @@ let self = getSelf()
 
 export const ViewQuestion = ({isHost, quiz, socket, roomId, quizLength}) => {
 
-  const [currentQuestionInd, setCurrrentQuestionInd] = useState(0)
+  const [currentQuestionInd, setCurrrentQuestionInd] = useState(1) // 0
   const [currentQuestion, setCurrentQuestion] = useState(quiz?.questions[currentQuestionInd])
 
   const [isRevealed, setIsRevealed] = useState(false)
@@ -17,14 +17,14 @@ export const ViewQuestion = ({isHost, quiz, socket, roomId, quizLength}) => {
   const [flag, setFlag] = useState(false)
   function upd(){setFlag(!flag)}
 
-  useEffect(() => {
-    console.log(socket);
-    isHost? setTimeout(()=>socket.emit('next',({roomId, questionInd: currentQuestionInd, question: currentQuestion })), 500)  //!
-    : null
+  // useEffect(() => {
+  //   console.log(socket);
+  //   isHost? setTimeout(()=>socket.emit('next',({roomId, questionInd: currentQuestionInd, question: currentQuestion })), 500)  //!
+  //   : null
 
-    socket.on('next',({questionInd, question})=>{console.log("VQ got next"); setIsRevealed(false),setCurrrentQuestionInd(questionInd),setCurrentQuestion(question)})
-    socket.on('reveal',({correctChoicesInd})=>{setIsRevealed(true);console.log('revealed', isRevealed);})
-  },[])
+  //   socket.on('next',({questionInd, question})=>{console.log("VQ got next"); setIsRevealed(false),setCurrrentQuestionInd(questionInd),setCurrentQuestion(question)})
+  //   socket.on('reveal',({correctChoicesInd})=>{setIsRevealed(true);console.log('revealed', isRevealed);})
+  // },[])
 
   function renderChoices(isRevealed) {
     const letters = ["A", "B", "C", "D"]
