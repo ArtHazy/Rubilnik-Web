@@ -13,7 +13,7 @@ export function initSocket(server){
             const roomData = {host: socket, quizLength: quizLength} 
             roomsData.set(roomId, roomData)
 
-            console.log(`create received for room ${roomId}`);
+            console.log(`create received for room "${roomId}"`);
             socket.data = {userId, userName};
             socket.join(roomId);
             let roommates = getRoommates(roomId)
@@ -38,7 +38,7 @@ export function initSocket(server){
 
             logRooms()
             userId? null : (userId = socket.id, console.log('no userId!'))
-            console.log(`join received from user ${userId} ${userName} to room: ${roomId}`);
+            console.log(`join received from user ${userId} ${userName} to room: "${roomId}"`);
             
             socket.data = {userId, userName};
 
@@ -56,7 +56,7 @@ export function initSocket(server){
                 io.to(roomId).emit('join',{userName, userId, roommates})
                 socket.emit('joined',{roommates, guestId: userId, quizLength: roomsData.get(roomId)?.quizLength })
             } else {
-                let e = `${userName} failed to join. Room ${roomId} does not exist`
+                let e = `${userName} failed to join. Room "${roomId}" does not exist`
                 console.log(e);
                 socket.data = {userId, userName};
                 socket.emit('joined', {e})
@@ -65,33 +65,33 @@ export function initSocket(server){
         })
       
         socket.on('start', ({roomId}) => {
-            console.log(`start received for room: ${roomId}`)
+            console.log(`start received for room: "${roomId}"`)
             io.to(roomId).emit('start',{})
         })
       
         socket.on('choice', ({roomId, userId, userName, questionInd, choices}) => {
             !userId? userId = socket.id : null
-            console.log(`choice received for room: ${roomId} from user ${userId} on question ${questionInd} with choice: ${choices}`)
+            console.log(`choice received for room: "${roomId}" from user ${userId} on question ${questionInd} with choice: ${choices}`)
             io.to(roomId).emit('choice',{userId, userName, questionInd, choices})
         })
       
         socket.on('next', ({roomId, questionInd, question}) => {
-            console.log(`next received for room: ${roomId} with question (# ${questionInd}): ${question.text}  with choices: ${question.choices}`)
+            console.log(`next received for room: "${roomId}" with question (# ${questionInd}): ${question.text}  with choices: ${question.choices}`)
             io.to(roomId).emit('next',{question, questionInd})
         })
       
         socket.on('end', ({roomId}) => {
-            console.log(`end received for room: ${roomId}`);
+            console.log(`end received for room: "${roomId}"`);
             io.to(roomId).emit('end',{})
         })
       
         socket.on('scores', ({roomId, usersScores}) =>{
-            console.log(`result received for room: ${roomId}`);
+            console.log(`result received for room: "${roomId}"`);
             io.to(roomId).emit('scores',{usersScores})
         })
       
         socket.on('reveal', ({roomId, correctChoicesInd}) => {
-            console.log(`reveal received for room: ${roomId} choiceInd: ${correctChoicesInd}`); 
+            console.log(`reveal received for room: "${roomId}" choiceInd: ${correctChoicesInd}`); 
             io.to(roomId).emit('reveal',{correctChoicesInd})
         })
       

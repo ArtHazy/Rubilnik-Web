@@ -27,9 +27,9 @@ export const ViewResult = ({usersChoices, isHost, roomId, socket, quiz, roommate
 
         {usersScores.map((entry, index)=>
           <div key={index} className="entry">
-            <div className={index == 0 ? "index first" : "index"}>{index + 1}</div>
-            <div className={index == 0 ? "name first" : "name"}>{roommates[entry.userId]?.id + " : " + roommates[entry.userId]?.name}</div>
-            <div className={index == 0 ? "score first" : "score"}>{entry.userScore}</div>
+            <div className={index == 0 ? "index first" : "index"}> {index + 1} </div>
+            <div className={index == 0 ? "name first" : "name"}> {entry.userId + " : " + entry.userName} </div>
+            <div className={index == 0 ? "score first" : "score"}> {entry.userScore} </div>
           </div>)}
       </div>
     </div>
@@ -56,6 +56,7 @@ export const ViewResult = ({usersChoices, isHost, roomId, socket, quiz, roommate
     Object.keys(usersChoices).forEach(userId => {
       let userChoices = usersChoices[userId] // [questionIndex: choiceIndex, ...]
       let userScore = 0
+      let userName = roommates[userId].name
 
       userChoices.forEach((userQuestionChoices, ind)=>{
         let questionCorrectChoices = correctChoices[ind]
@@ -66,7 +67,7 @@ export const ViewResult = ({usersChoices, isHost, roomId, socket, quiz, roommate
           userScore += userCorrectQuestionChoices.length / questionCorrectChoices.length
         }
       })
-      usersScores.push({userId, userName:undefined, userScore}) // userId undefined / userName undefined / userScore ok
+      usersScores.push({userId, userName, userScore}) // userId undefined / userName undefined / userScore ok
     })
     console.log(usersScores);
     return usersScores

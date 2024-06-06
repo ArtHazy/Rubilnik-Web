@@ -123,7 +123,16 @@ app.post('/user/quizzes',(req,res)=>{
     })
   }
 })
-app.post('/user/verify',(req,res)=>{ reqNotifier(req) })
+app.post('/user/verify',(req,res)=>{
+  reqNotifier(req)
+  try{
+    if (!(req.body.email && req.body.password)) throw new Error();
+    getUser(req.body.email).then((user)=>{
+      if (user && user.password == req.body.password) res.status(200).send()
+      else throw new Error();
+    })
+  } catch(e) { return res.status(404).json({msg: e.message}) }  
+})
 app.post('/checkRoomAvailability',(req,res)=>{
   reqNotifier(req)
   let roomId = req.body.roomId

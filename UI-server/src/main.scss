@@ -307,3 +307,7 @@ body,#root {
     }
   }
 }
+
+.ViewError{
+  @include view();
+}

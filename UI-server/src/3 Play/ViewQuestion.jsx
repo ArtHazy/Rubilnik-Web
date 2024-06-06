@@ -9,8 +9,8 @@ export const ViewQuestion = ({isHost, quiz, socket, roomId, quizLength}) => {
 
   const [currentQuestionInd, setCurrrentQuestionInd] = useState(0)
   const [currentQuestion, setCurrentQuestion] = useState(quiz?.questions[currentQuestionInd])
-
   const [isRevealed, setIsRevealed] = useState(false)
+
   const isLastQ = (currentQuestionInd == quiz?.questions.length-1)
   let progress = currentQuestionInd / quizLength
 
@@ -34,14 +34,14 @@ export const ViewQuestion = ({isHost, quiz, socket, roomId, quizLength}) => {
         <div className={"choice _"+ind+" "+(choice.isCorrect?"correct ":" ")+(isRevealed?"revealed ":" ")} key={JSON.stringify(choice)} 
           onClick={ (!isHost && !isRevealed)? ()=>socket.emit('choice', ({roomId, userId: self.id, questionInd: currentQuestionInd, choices: [ind] })) : null }
         >
-          {choice.text}
+          {choice.title}
           <div className="letter">{letters[ind]}</div>
         </div>
       : 
         <button className={"choice _"+ind+" "+(choice.isCorrect?"correct ":" ")+(isRevealed?"revealed ":" ")} key={JSON.stringify(choice)} 
           onClick={ (!isHost && !isRevealed)? ()=>socket.emit('choice', ({roomId, userId: self.id, questionInd: currentQuestionInd, choices: [ind] })) : null }
         >
-          {choice.text}
+          {choice.title}
           <div className="letter">{letters[ind]}</div>
         </button>
     )
@@ -57,7 +57,7 @@ export const ViewQuestion = ({isHost, quiz, socket, roomId, quizLength}) => {
   if (socket && socket.connected) return (
     <div className="ViewQuestion">
       <div className="head">
-        <div className="title">{currentQuestion?.text}</div>
+        <div className="title">{currentQuestion?.title}</div>
         <hstack>
           <progress value={progress}></progress>
           <div className="numbers">{currentQuestionInd+"/"+quizLength}</div>

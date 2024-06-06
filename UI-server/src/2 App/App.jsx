@@ -2,15 +2,18 @@ import { useState } from "react";
 import { ViewJoin } from "./ViewJoin";
 import { ViewLibrary } from "./ViewLibrary";
 import { ViewSelf } from "./ViewSelf";
-import { getSelf, validateSelf } from "../functions.mjs"
+import { getSelf, validateSelfInDB } from "../functions.mjs"
 
 export const App = () => {
   const [view, setView] = useState(<ViewLibrary/>)
-  return !validateSelf(getSelf())? window.location.href = "/login" :
-    <div className={"App"}>
+
+  if ( !getSelf() ) window.location.href = "/login"
+  else {
+    return <div className={"App"}>
       {view}
       <Navigation setView={setView} view={view}/>
     </div>
+  }  
 }
 
 export default App;

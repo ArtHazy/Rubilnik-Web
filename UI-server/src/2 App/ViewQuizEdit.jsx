@@ -1,8 +1,9 @@
 import { useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { limits } from "../values.mjs"
 import { Actions } from "./App"
 import { downloadObj, getSelf, loadQuizFromFile, putSelf} from "../functions.mjs"
+import { startRoomAsHost } from "./ViewLibrary"
 
 export const ViewQuizEdit = () => {
     const {ind} = useParams()
@@ -12,6 +13,8 @@ export const ViewQuizEdit = () => {
     const questions = quiz.questions
     const [focus, set_focus] = useState(-1) // question focus
     const [flag,setFlag] = useState(false)
+    const navigate = useNavigate()
+
     function upd(){ putSelf(self), setFlag(!flag)}
 
     return <div className="ViewQuizEdit">
@@ -37,7 +40,7 @@ export const ViewQuizEdit = () => {
             <button onClick={()=>{downloadObj(quiz, quiz.title)}}><span class="material-symbols-outlined">download</span></button>
             <label htmlFor="file-input"><button onClick={()=>{document.getElementById("file-input").click()}} ><span class="material-symbols-outlined">upload</span></button></label>
             <input style={{display:"none"}} id="file-input" type="file" onChange={(e)=>loadQuizFromFile(e.target.files[0], quiz, upd)}/>
-            <button onClick={()=>{navigate(`/play/${user.id}`, {state: {quiz, ind: quizInd}})}}><span class="material-symbols-outlined">play_arrow</span></button>
+            <button onClick={()=>startRoomAsHost(self.id, quiz, ind, navigate)}><span class="material-symbols-outlined">play_arrow</span></button>
         </Actions>
     </div>
 }

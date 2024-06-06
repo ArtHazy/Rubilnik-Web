@@ -1,11 +1,12 @@
 import { useLocation, useParams } from "react-router-dom"
-import { getSelf, putSelf, validateSelf } from "../functions.mjs"
+import { getSelf, putSelf, validateSelfInDB } from "../functions.mjs"
 import { io } from "socket.io-client";
 import { CORE_SERVER_URL } from "../values.mjs";
 import { ViewLobby } from "./ViewLobby";
 import { ViewQuestion } from "./ViewQuestion";
 import { ViewResult } from "./ViewResult";
 import { useEffect, useState } from "react";
+import { ViewError } from "../ViewError";
 
 export const Play = () => {
     const {state} = useLocation()
@@ -15,7 +16,7 @@ export const Play = () => {
     const [joined, setJoined] = useState(false)
     const [roommates, setRoommates] = useState({})
     const [self, setSelf] = useState(getSelf())
-    const [isAuthorized, setIsAuthorized] = useState(validateSelf(self))
+    const [isAuthorized, setIsAuthorized] = useState(validateSelfInDB(self))
     const isHost = state? true : false
     const gameStates = ['lobby', 'live', 'finished']
     const [gameState, setGameState] = useState(gameStates[0])
@@ -59,13 +60,12 @@ export const Play = () => {
           console.log('usersChoices:', usersChoices_temp)
         })
       }
-
       return () => {socket.off(), socket.disconnect();};
     }, []);
 
 
-    if (!socket || !socket.connected) return <div>failed to connect<button onClick={()=>{window.location.reload()}}>retry</button></div>
-    if (e) return <div>{e}</div>
+    if (!socket || !socket.connected) return <ViewError code={''} text={'failed to connect to the server'}><button onClick={()=>{window.location.reload()}}>retry</button></ViewError>
+    if (e) return <ViewError code={404} text={e}/>
     
     return <div className="Play">
       {!joined? <div> failed to join the room. Maybe it doesn't exist </div> : null}

@@ -21,11 +21,11 @@ type Quiz {
 }
 
 type Question {
-  text    String
+  title   String
   choices Choice[]
 }
 
 type Choice {
-  text      String
-  isCorrect Boolean
+  title     String
+  isCorrect Boolean?
 }

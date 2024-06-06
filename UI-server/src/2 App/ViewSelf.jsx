@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { limits } from "../values.mjs";
-import { getSelf, putSelf } from "../functions.mjs"
+import { getSelf, putSelf, putSelfInDB, removeSelf } from "../functions.mjs"
 
 export const ViewSelf = () => {
     const [flag,setFlag] = useState(false);
+    const self = getSelf();
     function upd(){ putSelf(self), setFlag(!flag) }
 
-    const self = getSelf();
 
     return <div className="ViewSelf">
         <header>ViewSelf</header>
@@ -20,6 +20,12 @@ export const ViewSelf = () => {
             </vstack>
             <vstack>
                 password:<input id='password' type="password" value={self?.password} maxLength={limits.maxPassLength} onChange={(e)=>{self.password = e.target.value, upd()}} />
+            </vstack>
+            <vstack>
+                <button onClick={()=>{
+                    if(putSelfInDB(self)) {removeSelf(), window.location='/'}
+                    else {confirm("Failed to save changes\nLog out without saving?")? (removeSelf(), window.location='/') : null}
+                }}>log out</button>
             </vstack>
         </div>
     </div>
