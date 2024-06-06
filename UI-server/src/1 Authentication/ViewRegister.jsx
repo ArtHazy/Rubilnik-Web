@@ -6,9 +6,9 @@ export const ViewRegister = () =>
         <div className='ViewRegister'>
             <div className="register-block">
                 
-                <div className="hstack">
+                <hstack>
                     <div className='reg accent'>REG</div><div className='ister accent'>ISTER</div>
-                </div>
+                </hstack>
 
                 <div>
                     <input id="username-input" type="text" placeholder='username' maxLength={limits.maxNameLength} />
