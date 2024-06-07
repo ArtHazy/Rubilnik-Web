@@ -111,12 +111,11 @@ app.post('/user/quizzes',(req,res)=>{
 })
 app.post('/user/verify',(req,res)=>{
   reqNotifier(req)
-  if (!(req.body.email && req.body.password)) {console.log('no em pass'); res.status(404).json({}).send()}
+  if (!(req.body.email && req.body.password)) {res.status(404).json({}).send()}
   else {
-    console.log('yes em pass');
     getUser(req.body.email).then((user)=>{
       if (user && user.password == req.body.password)  { console.log('valid'); res.status(200).send() }
-      else { console.log('invalid'); res.status(404).json({msg: e.message}) }
+      else { console.log('invalid'); res.status(404).json() }
     })
   } 
 })
