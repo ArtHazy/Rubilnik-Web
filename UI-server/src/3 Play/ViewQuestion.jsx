@@ -58,15 +58,15 @@ export const ViewQuestion = ({isHost, quiz, socket, roomId, quizLength}) => {
     <div className="ViewQuestion">
       <div className="head">
         <div className="title">{currentQuestion?.title}</div>
-        <hstack>
+        <div className="progress">
           <progress value={progress}></progress>
           <div className="numbers">{currentQuestionInd+"/"+quizLength}</div>
-        </hstack>
+        </div>
       </div>
       <div className="body">
         <div className="choices">{ renderChoices(isRevealed) }</div>
       </div>
-      <div className="action-buttons">
+      <div className="controls">
         {isHost? <button onClick={()=>revealCorrect()}>reveal</button> : null}
         {isHost? <button className="question_next_btn" onClick={()=>{
           !isLastQ? socket.emit('next', {roomId, questionInd: currentQuestionInd+1, question: quiz.questions[currentQuestionInd+1]})

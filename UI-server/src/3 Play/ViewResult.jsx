@@ -26,10 +26,10 @@ export const ViewResult = ({usersChoices, isHost, roomId, socket, quiz, roommate
         {console.log({roommates, usersScores, usersChoices})}
 
         {usersScores.map((entry, index)=>
-          <div key={index} className="entry">
-            <div className={index == 0 ? "index first" : "index"}> {index + 1} </div>
-            <div className={index == 0 ? "name first" : "name"}> {entry.userId + " : " + entry.userName} </div>
-            <div className={index == 0 ? "score first" : "score"}> {entry.userScore} </div>
+          <div key={index} className={"entry " + (index==0? "first":"")}>
+            <div className={"index"}> {index + 1} </div>
+            <div className={"name"}> {entry.userId + " : " + entry.userName} </div>
+            <div className={"score"}> {entry.userScore} </div>
           </div>)}
       </div>
     </div>

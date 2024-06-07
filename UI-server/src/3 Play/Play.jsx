@@ -26,7 +26,7 @@ export const Play = () => {
     const [e, setE] = useState(null)
     const [usersChoices, setUsersChoices] = useState({})
   
-    if (isHost && !isAuthorized) { return <div>You're not authorized</div> }
+    if (isHost && !isAuthorized) { return <ViewError text={"You're not authorized"} />}
     
     useEffect(() =>{
       const usersChoices_temp = {}
@@ -73,7 +73,7 @@ export const Play = () => {
       {joined && gameState === gameStates[1] ? <ViewQuestion isHost={isHost} socket={socket} roomId={roomId} quiz={quiz} setGameState={setGameState} quizLength={quizLength}/> : null}
       {joined && gameState === gameStates[2] ? <ViewResult isHost={isHost} socket={socket} roomId={roomId} quiz={quiz} usersChoices={usersChoices} roommates={roommates} /> : null}
       
-      <button onClick={()=>{socket.emit('bark', {name: self?.name})}}>bark</button>
+      {/* <button onClick={()=>{socket.emit('bark', {name: self?.name})}}>bark</button> */}
       <div className="roommates-counter"> connected players: { Object.keys(roommates).length } </div>
       <div className="hstack roommates">{ Object.keys(roommates).map((userId) => <div> {roommates[userId]?.name}</div>) }</div>
     </div>

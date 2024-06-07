@@ -59,20 +59,6 @@ clearDB()
 var userIds = new IdTree(4)
 let io = initSocket(server,app)
 
-
-app.post('/user/verify',(req,res)=>{
-  reqNotifier(req);
-  if (doesJsonHave(req.body, handleMissingProperties, 'email', 'password')){
-    try {
-      getUser(req.body.email).then(result=>{
-        if (result){
-          if (result.password==req.body.password) res.status(200).json(result)
-          else res.status(400).json({msg: 'Wrong password'})
-        } else res.status(400).json({msg:'Failed to get'})
-      })
-    } catch (error) { res.status(500).json({msg:"Server error"}) }
-  }
-})
 app.post('/user',(req,res)=>{
   reqNotifier(req);
   if (doesJsonHave(req.body, handleMissingProperties, 'name','email','password')){
@@ -125,13 +111,14 @@ app.post('/user/quizzes',(req,res)=>{
 })
 app.post('/user/verify',(req,res)=>{
   reqNotifier(req)
-  try{
-    if (!(req.body.email && req.body.password)) throw new Error();
+  if (!(req.body.email && req.body.password)) {console.log('no em pass'); res.status(404).json({}).send()}
+  else {
+    console.log('yes em pass');
     getUser(req.body.email).then((user)=>{
-      if (user && user.password == req.body.password) res.status(200).send()
-      else throw new Error();
+      if (user && user.password == req.body.password)  { console.log('valid'); res.status(200).send() }
+      else { console.log('invalid'); res.status(404).json({msg: e.message}) }
     })
-  } catch(e) { return res.status(404).json({msg: e.message}) }  
+  } 
 })
 app.post('/checkRoomAvailability',(req,res)=>{
   reqNotifier(req)

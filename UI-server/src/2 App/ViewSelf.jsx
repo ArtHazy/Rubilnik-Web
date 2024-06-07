@@ -9,7 +9,7 @@ export const ViewSelf = () => {
 
 
     return <div className="ViewSelf">
-        <header>ViewSelf</header>
+        <header>Profile</header>
         <div className="form">
             <vstack>
                 {console.log(self.id)}

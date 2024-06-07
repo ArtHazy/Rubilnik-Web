@@ -30,7 +30,7 @@ export function validateSelfInDB(self){
     req.open('POST', CORE_SERVER_URL+"/user/verify", false)
     req.setRequestHeader('Content-Type', 'application/json');
     req.onload = ()=>{ isOk=req.status==200 }
-    req.send(JSON.stringify(self));
+    req.send(JSON.stringify({email: self.email, password: self.password}));
     console.log('isOk',isOk);
     return isOk;
 }

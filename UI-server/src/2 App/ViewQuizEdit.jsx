@@ -5,6 +5,10 @@ import { Actions } from "./App"
 import { downloadObj, getSelf, loadQuizFromFile, putSelf} from "../functions.mjs"
 import { startRoomAsHost } from "./ViewLibrary"
 
+let del = <span className="material-symbols-outlined">remove</span>
+let drop_down = <span className="material-symbols-outlined">arrow_drop_down</span>
+let drop_up = <span className="material-symbols-outlined">arrow_drop_up</span>
+
 export const ViewQuizEdit = () => {
     const {ind} = useParams()
     const self = getSelf()
@@ -18,8 +22,8 @@ export const ViewQuizEdit = () => {
     function upd(){ putSelf(self), setFlag(!flag)}
 
     return <div className="ViewQuizEdit">
-        <div className="vstack">
-            <input value={quiz?.title} onChange={e=>{ quiz.title = e.target.value ,upd() }}/>
+        <div className="header">
+            <input type="text" value={quiz?.title} onChange={e=>{ quiz.title = e.target.value ,upd() }}/>
             <div>questions:</div>
         </div>
         <div className="grid">
@@ -49,8 +53,8 @@ const Question = ({questions, question, ind, isFocus, set_focus, upd}) =>
     <div className="question">
         <div>{ind}</div>
         <input type="text" value={question.title} onChange={(e)=>{ question.title = e.target.value; upd(); }}/>
-        <button onClick={()=>{Array.isArray(questions)? (console.log('delete: ', questions.splice(ind,1)), upd()) : null}}>del</button>
-        <button className="question" onClick={()=>{isFocus? set_focus(-1):set_focus(ind)}}> {isFocus? '˄':'˅'} </button>
+        <button className="remove"onClick={()=>{Array.isArray(questions)? (console.log('delete: ', questions.splice(ind,1)), upd()) : null}}>{del}</button>
+        <button className="question" onClick={()=>{isFocus? set_focus(-1):set_focus(ind)}}> {isFocus? drop_up : drop_down } </button>
     </div>
 
 const Choices = ({choices,upd,isFocus}) => 
@@ -61,7 +65,7 @@ const Choices = ({choices,upd,isFocus}) =>
                 return <div className="choice">
                     <input type="checkbox" checked={c.isCorrect} onChange={(e)=>{c.isCorrect? c.isCorrect = e.target.value : c.isCorrect = false, c.isCorrect=!c.isCorrect ,upd()}} />
                     <input type="text" value={c.title} onChange={(e)=>{c.title=e.target.value, upd()}}/>
-                    <button onClick={()=>{console.log(choices.splice(i,1)), upd()}}>del</button>
+                    <button className="remove" onClick={()=>{console.log(choices.splice(i,1)), upd()}}>{del}</button>
                 </div>
             })}
             {choices.length<limits.maxChoicesLength? <button onClick={ ()=>{Array.isArray(choices)? choices.push({}):null, upd()} }>add</button>: null}

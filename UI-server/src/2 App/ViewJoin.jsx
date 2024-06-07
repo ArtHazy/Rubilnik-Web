@@ -8,7 +8,7 @@ export const ViewJoin = () => {
     console.log(self);
 
     return <div className="ViewJoin">
-        <header>ViewJoin</header>
+        <header>Join the game</header>
         <div className="form">
             <vstack>name:<input id='name' type="text" value={self.name} maxLength={limits.maxNameLength} onChange={(e)=>{self.name = e.target.value, putSelf(self)}} /></vstack>
             <vstack>key:<RoomKeyInput/></vstack>
@@ -38,8 +38,8 @@ const RoomKeyInput = () => {
         // alert(e.key);
         e.target.value.length==0 && e.key=='Backspace'? e.target.previousElementSibling?.focus():null
     }
-    return <div className="RoomKeyInput" style={{display:"flex", justifyContent:"safe center"}}>
-        {new Array(4).fill(<input maxLength={1} style={{width:'1em', textAlign:'center', textTransform:'capitalize'}} onChange={(e)=>switchTarget(e)} onKeyDown={(e)=>switchTarget_(e)} />)}
+    return <div className="RoomKeyInput">
+        {new Array(4).fill(<input type="text" maxLength={1} onChange={(e)=>switchTarget(e)} onKeyDown={(e)=>switchTarget_(e)} />)}
     </div>
 }
 

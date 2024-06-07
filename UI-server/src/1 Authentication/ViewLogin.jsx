@@ -3,41 +3,41 @@ import { getSelf, putSelf, validateSelfInDB } from "../functions.mjs"
 
 export const ViewLogin = () => {
 
-    if ( getSelf() ) window.location.href='/'
+    if ( getSelf()?.id ) window.location.href='/'
     else return <div className='ViewLogin'>
-        <div className='login-block'>
+        <div className='form'>
             <hstack><div className='log accent'>LOG</div><div className='in accent'>IN</div></hstack>
-            <div>
+            <div className='form'>
                 <input id="email-input" type="email" placeholder='email' maxLength={limits.maxEmailLength} />
-                <div className='spacer-default'></div>
                 <input id="password-input" type="password" placeholder='password' maxLength={limits.maxPassLength} />
+                <button id='submit' onClick={() => {
+                    let submit = document.getElementById('submit');
+                    submit.hidden = true;
+                    let load = document.createElement('div')
+                    load.innerHTML = '/..'
+                    submit.after(load)
+
+                    let email = document.getElementById('email-input').value;
+                    let password = document.getElementById('password-input').value;
+
+                    fetch(CORE_SERVER_URL+'/user/verify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({email, password})
+                    })
+                    .then(res => { res.json().then(json => { res.ok ? (putSelf(json), window.location.href='/') : alert('failure') }) })
+                    .catch(e=>{ alert(e.message) })
+                    .finally(()=>{ load.remove(), submit.hidden = false })
+                }}>login</button>
             </div>
-            <div className='spacer-default'></div>
 
-            <button id='submit' onClick={() => {
-                let submit = document.getElementById('submit');
-                submit.hidden = true;
-                let load = document.createElement('div')
-                load.innerHTML = '/..'
-                submit.after(load)
 
-                let email = document.getElementById('email-input').value;
-                let password = document.getElementById('password-input').value;
+            <div className='grid'>
+                <a href="/join"><small>join the game</small></a>
+                {' | '}
+                <a href="/register"><small>register</small></a>
+            </div>
 
-                fetch(CORE_SERVER_URL+'/user/verify', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({email, password})
-                })
-                .then(res => { res.json().then(json => { res.ok ? (putSelf(json), window.location.href='/') : alert('failure') }) })
-                .catch(e=>{ alert(e.message) })
-                .finally(()=>{ load.remove(), submit.hidden = false })
-            }}>login</button>
-
-            <div className='spacer-default'></div>
-            <a href="/register"><small>register</small></a>
-            <div className="spacer-default"></div>
-            <a href="/join"><small>join the game</small></a>
         </div>
     </div>
 }

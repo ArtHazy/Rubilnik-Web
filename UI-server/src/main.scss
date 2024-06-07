@@ -1,7 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
+
 :root{
   --def-gap: .3cm;
   --def-transition: .3s;
-  --def-border-radius: 14px;
+  --def-border-radius: 8px;
+
+  --color-dark:#242424;
+  --color-light:#D9D9D9;
+
+  --color-split1: #0FD4CD;
+  --color-split2: rgb(214, 191, 129);
   
   --choice-1-color: #709B95;
   --choice-2-color: #F08A5D;
@@ -12,25 +20,45 @@
   --choice-wrong-1-color: #8A5741;
   --choice-wrong-1-color: #6E3041;
   --choice-wrong-1-color: #7F7F7F;
+
+  --color-gold: #e8af4b;
+  
 }
 
 @mixin vstack {
   display: flex;
   flex-direction: column;
+  gap: calc(var(--def-gap)/2);
   height: fit-content;
   justify-content: start;
 }
 @mixin hstack {
   display: flex;
+  gap: calc(var(--def-gap)/2);
   flex-direction: row;
   justify-content: safe center;
   align-items: center;
 }
+// @mixin vstack {
+//   @include grid();
+//   width: fit-content;
+//   gap: calc(var(--def-gap)/2);
+//   padding: 0;
+//   grid-template-columns: 1fr;
+//   *{width: 100%; box-sizing: border-box;}
+//   justify-items: start;
+// }
+// @mixin hstack {
+//   @include grid();
+//   gap: calc(var(--def-gap)/2);
+//   *{width: 100%;}
+// }
 @mixin view {
   width: 100%;
   height: 100%;
   overflow: hidden;
   min-width: 333px;
+  // max-width: 30cm;
   font-family: inherit;
   padding: var(--def-gap);
   padding-bottom: 2cm;
@@ -58,7 +86,6 @@
   min-width: 333px;
   font-family: inherit;
   padding: 0.2cm;
-  padding-bottom: 3cm;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -75,11 +102,14 @@
   -ms-overflow-style: auto;  /* IE and Edge */
   scrollbar-width: thin;  /* Firefox */
 }
+@mixin dynamic-font{
+  font-size: clamp( 1.5em, 2.5vw, 2em);
+}
 
-hstack {
+hstack, .hstack {
   @include hstack();
 }
-vstack {
+vstack, .vstack {
   @include vstack();
 }
 body,#root {
@@ -89,14 +119,44 @@ body,#root {
   margin: 0;
   box-sizing: border-box;
   background-color: var(--color-dark);
+  & > div,p,h1,h2,h3,h4,h5,h6 { color: var(--color-light); }
+  a {
+    color: var(--color-split2);
+  }
 }
 
 
 
+button {
+  &.big{ min-width: 2cm; padding: 8px;
+  }
+  padding: .1cm;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: inherit;
+  background-color: var(--color-light);
+  // fill: var(--color-light);
+  // color: var(--color-dark);
+  border-radius: .15cm;
+  cursor: pointer;
+}
+input, button{
+  font-family: "Russo One", sans-serif; background: var(--color-light);
+}
+input[type='text'],input[type='password'],input[type='email']{
+  height: 1.5em;
+  border: transparent;
+  border-radius: 4px;
+  &:focus{outline: var(--choice-1-color) solid 2px  ; outline-offset: 2px}
+}
 
 .App{
   @include scrollbar-hidden();
   box-sizing: border-box;
+  
+  color: var(--color-light);
+
   header{
     text-align: center;
   }
@@ -107,22 +167,49 @@ body,#root {
     bottom: 3svh;
     left: 0;
     right: 0;
+    button{
+      width: 2cm;
+      border: 0;
+      margin: 0 .1cm;
+      box-sizing: border-box;
+      &.active{
+        background: var(--color-dark);
+        outline: solid 2px var(--color-light);
+        fill: var(--color-light);
+        color: var(--color-light);
+        img.icon{ filter: invert(1); }
+        scale: 1.01;
+        transition: .3s;
+      }
+    }
   }
 }
 
 .Actions{
+  border-radius: var(--def-border-radius);
+  overflow: hidden;
+  button{ border: 0; }
   @media (orientation: landscape) {
     @include hstack();
+    align-content: safe center;
     position: fixed;
     left: 0;
     right: 0;
     bottom: 3svh;
+    button{
+      width: 2cm;
+    }
   }
   @media (orientation: portrait) {
     @include vstack();
+    gap: 0;
     position: fixed;
     right: 3svh;
     bottom: 3svh;
+    button{
+      padding: var(--def-gap);
+      border-radius: 0;
+    }
   }
 }
 
@@ -134,15 +221,9 @@ body,#root {
   justify-content: safe center;
   padding-bottom: 0.2cm;
   box-sizing: border-box;
-  .accent{
-    font-size: 2em;
-  }
-  .log,.reg{
-    color: var(--color-split1);
-  }
-  .in, .ister{
-    color: var(--color-split2);
-  }
+  .accent{ font-size: 2em; }
+  .log,.reg{ color: var(--color-split1); }
+  .in, .ister{ color: var(--color-split2); }
 }
 
 .ViewLibrary{
@@ -150,7 +231,7 @@ body,#root {
   .QuizTile{
     display: grid;
     grid-template-columns: 1fr 5fr 1fr;
-    background: pink;
+    // background: pink;
     width: 100%;
     height: 3cm;
     position: relative;
@@ -163,28 +244,45 @@ body,#root {
     @include grid();
     padding: 0;
     margin: var(--def-gap) 0;
-    grid-template-columns: repeat(auto-fill, minmax(6cm,1fr));
+    grid-template-columns: repeat(auto-fill, minmax(8cm,1fr));
     grid-auto-rows: 3cm;
   }
 }
 
 
-.ViewSelf, .ViewJoin{
-  input{text-align: center;}
-}
+.ViewSelf, .ViewJoin{ input{text-align: center; }}
+
+
+
 .ViewSelf{
   @include view();
+  height: 100svh;
+  .form{ margin: auto; box-sizing: border-box}
 }
+
 
 .ViewJoin{
   @include view();
-  height: 100vh;
-  .form{
-    @include grid();
-    width: fit-content;
-    vstack{
-      width: 100%;
-    }
+  height: 100svh;
+  .form{ margin: auto; }
+  .RoomKeyInput{
+    @include hstack();
+    padding: 0;
+    input[type='text']{ font-size: 1.2em; width: 1.2em; text-align: safe center; text-transform: capitalize;}
+    width: 100%;
+    justify-content: safe center;
+    grid-template-columns: repeat(4, 1.5em);
+  }
+}
+
+.ViewSelf, .ViewJoin, .ViewLibrary{ padding-bottom: 2cm; }
+
+.form{
+  @include grid();
+  width: 100%;
+  max-width: 8cm ;
+  vstack{
+    width: 100%;
   }
 }
 
@@ -192,6 +290,10 @@ body,#root {
   @include view();
   div,input{text-align: center;}
   input {width: 100%;}
+  .header{
+    @include grid();
+    max-width: 20cm;
+  }
   .grid{
     @include grid();
     max-width: 20cm;
@@ -204,18 +306,23 @@ body,#root {
         grid-area: 2/1/3/4;
         width: 100%;
         z-index: 0;
+        padding: 0;
       }
+      button.remove{ padding: 0 }
     }
     .choices{
       @include scrollbar-hidden();
+      padding: 0;
       width: 100%;
       position: relative;
       height: 0;
       overflow: scroll;
       transition: var(--def-transition);
+      box-sizing: border-box;
       &.focus{
-        height: 3.5cm;
-        box-sizing: border-box;
+        padding: var(--def-gap);
+        height: 5cm;
+        transition: var(--def-transition);
       }
       .grid{
         @include grid();
@@ -226,74 +333,119 @@ body,#root {
   }
 }
 
-
 .Play{
+ width: 100svw; 
+ height: 100svh; 
+ @include grid();
+ grid-template-rows: 1fr, 
 }
 
 .ViewQuestion{
   @include view();
-  *{max-width: 20cm;}
+  @include dynamic-font();
+  padding: 0;
   .head{
+    height: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    margin-bottom: 1cm;
     width: 100%;
-    progress{
-      width: 100%;
-      height: 1cm;
+    max-width: 20cm;
+    .progress{
+      @include grid();
+      grid-template-columns: 1fr 1cm;
+      progress{
+        width: 100%;
+        height: 1cm;
+      }
     }
   }
   .body{
     width: 100%;
+    height: 80%;
+    @media (orientation:portrait){
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
     .choices{
       @include grid();
-      @media (orientation: landscape){grid-template-columns: 1fr 1fr}
+      padding: 0;
+      @media (orientation: landscape){
+        grid-template-columns: 1fr 1fr;
+        height: 100%;
+      }
       @media (orientation: portrait){}
 
       .choice{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: start;
+        position: relative;
         padding: var(--def-gap);
         width: 100%;
-        @media (orientation: landscape){}
-        @media (orientation: portrait){}
+        @media (orientation: landscape){ height: 100%; }
+        @media (orientation: portrait){ min-height: 1.5cm;}
+        border-radius: var(--def-border-radius);
+        box-sizing: border-box;
+        .letter{
+          position: absolute;
+          right: var(--def-gap);
+          top: var(--def-gap);
+        }
 
+        color: var(--color-dark);
         &._0{
-          // background: var(--choice-1-color);
-          // &.revealed { 
-          //   background: var(--choice-wrong-1-color);
-          //   &.correct { background: var(--choice-1-color); }
-          // }
+          background: var(--choice-1-color);
+          &.revealed { 
+            background: var(--choice-wrong-1-color);
+            &.correct { background: var(--choice-1-color); }
+          }
         }
         &._1{
-          // background: var(--choice-2-color);
-          // &.revealed { 
-          //   background: var(--choice-wrong-2-color);
-          //   &.correct { background: var(--choice-2-color); }
-          // }
+          background: var(--choice-2-color);
+          &.revealed { 
+            background: var(--choice-wrong-2-color);
+            &.correct { background: var(--choice-2-color); }
+          }
         }
         &._2{
-          // background: var(--choice-3-color);
-          // &.revealed { 
-          //   background: var(--choice-wrong-3-color);
-          //   &.correct { background: var(--choice-3-color); }
-          // }
+          background: var(--choice-3-color);
+          &.revealed { 
+            background: var(--choice-wrong-3-color);
+            &.correct { background: var(--choice-3-color); }
+          }
         }
         &._3{
-          // background: var(--choice-4-color);
-          // &.revealed { 
-          //   background: var(--choice-wrong-4-color);
-          //   &.correct { background: var(--choice-4-color); }
-          // }
+          background: var(--choice-4-color);
+          &.revealed { 
+            background: var(--choice-wrong-4-color);
+            &.correct { background: var(--choice-4-color); }
+          }
         }
       }
     }
   }
+  .controls{
+    margin: var(--def-gap)
+  }
 }
 .ViewLobby{
   @include view();
+  @include grid();
+  grid-template-rows: 1fr 5em 2em 1fr;
+
   #qr-container {
     @include hstack();
     width: 150px;
     height: 150px;
     border-radius: var(--def-border-radius);
-    background: pink;
+    background: white;
   }
+  .id{ font-size: clamp(3em, 12vw, 5em)};
 }
 .ViewResult{
   @include view();
@@ -302,6 +454,8 @@ body,#root {
     padding: 0;
     max-width: 30cm;
     .entry{
+      border-radius: var(--def-border-radius);
+      &.first{ background-color:  var(--color-gold); color: var(--color-dark) }
       @include grid();
       grid-template-columns: 1fr 5fr 1fr;
     }
@@ -310,4 +464,6 @@ body,#root {
 
 .ViewError{
   @include view();
+  height: 100svh;
+  justify-content: safe center;
 }
