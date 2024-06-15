@@ -22,7 +22,7 @@ export const ViewSelf = () => {
                 password:<input id='password' type="password" value={self?.password} maxLength={limits.maxPassLength} onChange={(e)=>{self.password = e.target.value, upd()}} />
             </vstack>
             <vstack>
-                <button onClick={()=>{
+                <button className="big" onClick={()=>{
                     if(putSelfInDB(self)) {removeSelf(), window.location='/'}
                     else {confirm("Failed to save changes\nLog out without saving?")? (removeSelf(), window.location='/') : null}
                 }}>log out</button>

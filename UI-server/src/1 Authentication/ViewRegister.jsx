@@ -13,7 +13,7 @@ export const ViewRegister = () => {
                 <input id="username-input" type="text" placeholder='username' maxLength={limits.maxNameLength} />
                 <input id="email-input" type="email" placeholder='email' maxLength={limits.maxEmailLength} />
                 <input id="password-input" type="password" placeholder='password' maxLength={limits.maxPassLength} />
-                <button id='submit' onClick={() => {
+                <button id='submit' className='big' onClick={() => {
                     let submit = document.getElementById('submit');
                     submit.hidden = true;
                     let load = document.createElement('div');

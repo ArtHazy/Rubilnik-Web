@@ -12,7 +12,7 @@ export const ViewJoin = () => {
         <div className="form">
             <vstack>name:<input id='name' type="text" value={self.name} maxLength={limits.maxNameLength} onChange={(e)=>{self.name = e.target.value, putSelf(self)}} /></vstack>
             <vstack>key:<RoomKeyInput/></vstack>
-            <button style={{width:"100%"}} onClick={(e)=>{navigatePlay()}}>join</button>
+            <button className="big" style={{width:"100%"}} onClick={(e)=>{navigatePlay()}}>join</button>
         </div>
     </div>
 

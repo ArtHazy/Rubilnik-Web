@@ -5,7 +5,8 @@ import { Actions } from "./App"
 import { downloadObj, getSelf, loadQuizFromFile, putSelf} from "../functions.mjs"
 import { startRoomAsHost } from "./ViewLibrary"
 
-let del = <span className="material-symbols-outlined">remove</span>
+let rem = <span className="material-symbols-outlined">remove</span>
+let del = <span className="material-symbols-outlined">delete</span>
 let drop_down = <span className="material-symbols-outlined">arrow_drop_down</span>
 let drop_up = <span className="material-symbols-outlined">arrow_drop_up</span>
 
@@ -23,7 +24,7 @@ export const ViewQuizEdit = () => {
 
     return <div className="ViewQuizEdit">
         <div className="header">
-            <input type="text" value={quiz?.title} onChange={e=>{ quiz.title = e.target.value ,upd() }}/>
+            <input placeholder="quiz title" type="text" value={quiz?.title} onChange={e=>{ quiz.title = e.target.value ,upd() }}/>
             <div>questions:</div>
         </div>
         <div className="grid">
@@ -35,7 +36,7 @@ export const ViewQuizEdit = () => {
                     <Choices choices={choices} upd={upd} isFocus={focus==i}/>
                 ]
             })}
-            {questions.length<limits.maxQuestionsLength? <button onClick={()=>{questions.push({title:'new'}), upd()}}><span className="material-symbols-outlined">add</span></button>:null}
+            {questions.length<limits.maxQuestionsLength? <button id="add" onClick={()=>{questions.push({title:'new'}), upd()}}><span className="material-symbols-outlined">add</span></button>:null}
         </div>
 
 
@@ -65,9 +66,9 @@ const Choices = ({choices,upd,isFocus}) =>
                 return <div className="choice">
                     <input type="checkbox" checked={c.isCorrect} onChange={(e)=>{c.isCorrect? c.isCorrect = e.target.value : c.isCorrect = false, c.isCorrect=!c.isCorrect ,upd()}} />
                     <input type="text" value={c.title} onChange={(e)=>{c.title=e.target.value, upd()}}/>
-                    <button className="remove" onClick={()=>{console.log(choices.splice(i,1)), upd()}}>{del}</button>
+                    <button className="remove" onClick={()=>{console.log(choices.splice(i,1)), upd()}}>{rem}</button>
                 </div>
             })}
-            {choices.length<limits.maxChoicesLength? <button onClick={ ()=>{Array.isArray(choices)? choices.push({}):null, upd()} }>add</button>: null}
+            {choices.length<limits.maxChoicesLength? <button id="add" onClick={ ()=>{Array.isArray(choices)? choices.push({}):null, upd()} }>add</button>: null}
         </div>
     </div>

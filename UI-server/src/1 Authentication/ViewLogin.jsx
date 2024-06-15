@@ -10,7 +10,7 @@ export const ViewLogin = () => {
             <div className='form'>
                 <input id="email-input" type="email" placeholder='email' maxLength={limits.maxEmailLength} />
                 <input id="password-input" type="password" placeholder='password' maxLength={limits.maxPassLength} />
-                <button id='submit' onClick={() => {
+                <button id='submit' className='big' onClick={() => {
                     let submit = document.getElementById('submit');
                     submit.hidden = true;
                     let load = document.createElement('div')
