@@ -2,5 +2,28 @@
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
         "Back/lib/postgresql-42.7.3.jar"
-    ]
+    ],
+    "hide-files.files": [
+        "Core-Java/gradlew",
+        "Core-Java/gradlew.bat",
+        "Core-Java/settings.gradle.kts",
+        "Core-Java/.gitignore",
+        "Core-Java/.gitattributes",
+        "Core-Java/gradle"
+    ],
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/.ruby-lsp": true,
+        "Core-Java/gradlew": true,
+        "Core-Java/gradlew.bat": true,
+        "Core-Java/settings.gradle.kts": true,
+        "Core-Java/.gitignore": true,
+        "Core-Java/.gitattributes": true,
+        "Core-Java/gradle": true
+    }
 }
