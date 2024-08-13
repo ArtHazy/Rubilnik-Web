@@ -1,4 +1,4 @@
-package org.arthazy.rubilnik.users;
+package org.rubilnik.basicLogic.users;
 
 public class Host extends User {
     public Host(User user) {super(user);}

@@ -1,9 +1,7 @@
-package org.arthazy.rubilnik;
+package org.rubilnik.basicLogic;
 
-import org.arthazy.rubilnik.Quiz.Question;
-import org.arthazy.rubilnik.users.Host;
-import org.arthazy.rubilnik.users.Player;
-import org.arthazy.rubilnik.users.User;
+import org.rubilnik.basicLogic.Quiz.Question;
+import org.rubilnik.basicLogic.users.*;
 
 public class Main {
     public static void main(String[] args) {

@@ -1,20 +1,21 @@
-package org.arthazy.rubilnik;
+package org.rubilnik.basicLogic;
 import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.rubilnik.basicLogic.Quiz.Question;
+import org.rubilnik.basicLogic.Quiz.Question.Choice;
+import org.rubilnik.basicLogic.users.Host;
+import org.rubilnik.basicLogic.users.Player;
+import org.rubilnik.basicLogic.users.User;
+
 import java.util.Map;
+import java.io.Serializable;
 import java.util.HashMap;
 // import java.util.UUID;
 import java.util.HashSet;
 
-import org.arthazy.rubilnik.Quiz.Question;
-import org.arthazy.rubilnik.Quiz.Question.Choice;
-import org.arthazy.rubilnik.users.Host;
-import org.arthazy.rubilnik.users.Player;
-import org.arthazy.rubilnik.users.User;
-
-public class Room {
+public class Room implements Serializable{
     static String[] statuses = { "await", "progress", "complete" };
     
     // private UUID id;

@@ -1,11 +1,12 @@
-package org.arthazy.rubilnik;
+package org.rubilnik.basicLogic;
 import java.util.Map;
-import java.util.Date;
 
-import org.arthazy.rubilnik.Quiz.Question;
-import org.arthazy.rubilnik.Quiz.Question.Choice;
-import org.arthazy.rubilnik.users.Player;
-import org.arthazy.rubilnik.users.User;
+import org.rubilnik.basicLogic.Quiz.Question;
+import org.rubilnik.basicLogic.Quiz.Question.Choice;
+import org.rubilnik.basicLogic.users.Player;
+import org.rubilnik.basicLogic.users.User;
+
+import java.util.Date;
 
 
 public class QuizReport {

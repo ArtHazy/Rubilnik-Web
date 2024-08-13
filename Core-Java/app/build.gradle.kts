@@ -23,6 +23,11 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+
+    implementation("org.springframework.boot:spring-boot-starter-web:3.3.2")
+    implementation("org.postgresql:postgresql:42.7.3")
+    implementation("org.hibernate.orm:hibernate-core:6.6.0.Final")
+
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -34,9 +39,14 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "org.arthazy.rubilnik.Main"
+    mainClass = "org.rubilnik.Main"
 }
 
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "org.rubilnik.Main"
+    }
+}
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()

@@ -1,16 +1,30 @@
-package org.arthazy.rubilnik.users;
+package org.rubilnik.basicLogic.users;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Nullable;
+import org.rubilnik.basicLogic.Quiz;
+import org.rubilnik.basicLogic.Room;
 
-import org.arthazy.rubilnik.Quiz;
-import org.arthazy.rubilnik.Room;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
-public class User {
-    private int id;
+
+@Entity
+@Table(name = "users") // "User" is reserved keyword in psql
+public class User implements Serializable {
+    @Id @GeneratedValue
+    private long id;
+    @Column
     private String name;
+    @JoinColumn @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Quiz> quizzes = new LinkedList<>();
     protected Room room;
 
@@ -21,7 +35,7 @@ public class User {
         this.room = room;
     }
     
-
+    protected User(){} //
     public User(String name){
         this.name = name;
     }
@@ -38,10 +52,8 @@ public class User {
     public void createQuiz(String title){
         quizzes.add(new Quiz(this,title));
     }
-    
-    @Nullable
-    public
-    Quiz getQuiz(int index){
+
+    public Quiz getQuiz(int index){
         try {
             return quizzes.get(index);
         } catch (IndexOutOfBoundsException e) {};

@@ -4,14 +4,12 @@
 package org.example;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.rubilnik.basicLogic.QuizReport;
+import org.rubilnik.basicLogic.Room;
+import org.rubilnik.basicLogic.Quiz.Question;
+import org.rubilnik.basicLogic.users.*;
 
-import org.arthazy.rubilnik.Quiz.Question;
-import org.arthazy.rubilnik.QuizReport;
-import org.arthazy.rubilnik.Room;
-import org.arthazy.rubilnik.users.Host;
-import org.arthazy.rubilnik.users.Player;
-import org.arthazy.rubilnik.users.User;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AppTest {
     @Test void appHasAGreeting() {
