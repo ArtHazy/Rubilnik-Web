@@ -3,8 +3,8 @@ package org.rubilnik;
 import java.util.List;
 
 import org.rubilnik.basicLogic.users.User;
-// import org.rubilnik.webLogic.WebServer;
-// import org.springframework.boot.SpringApplication;
+import org.rubilnik.webAPI.WebServer;
+import org.springframework.boot.SpringApplication;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Main {
@@ -31,6 +31,6 @@ public class Main {
 
 
         //Spring Boot
-        // SpringApplication.run(WebServer.class, args);
+        SpringApplication.run(WebServer.class, args);
     }
 }

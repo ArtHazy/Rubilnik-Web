@@ -25,9 +25,10 @@ dependencies {
     implementation(libs.guava)
 
     implementation("org.springframework.boot:spring-boot-starter-web:3.3.2")
+    implementation("org.springframework.boot:spring-boot-starter-websocket:3.3.2")
+    // implementation("org.springframework:spring-websocket:6.0.13")
     implementation("org.postgresql:postgresql:42.7.3")
     implementation("org.hibernate.orm:hibernate-core:6.6.0.Final")
-
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
