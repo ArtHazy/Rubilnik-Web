@@ -10,7 +10,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 @Configuration
 @EnableWebSocket
-public class WebSocketConfig implements WebSocketConfigurer {
+public class WS_Configuration implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
@@ -21,6 +21,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
         @Override
         protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
             String payload = message.getPayload();
+            
             System.out.println("Got payload: " + payload);
             session.sendMessage(new TextMessage("Server bark"));
             // super.handleTextMessage(session, message);

@@ -24,6 +24,10 @@ public class User implements Serializable {
     private long id;
     @Column
     private String name;
+    @Column
+    private String email;
+    @Column
+    private String password;
     @JoinColumn @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Quiz> quizzes = new LinkedList<>();
     protected Room room;
@@ -31,17 +35,27 @@ public class User implements Serializable {
     public String getName() {
         return name;
     }
+    public String getEmail() {
+        return email;
+    }
+    public String getPassword() {
+        return password;
+    }
     public void setRoom(Room room) {
         this.room = room;
     }
     
     protected User(){} //
-    public User(String name){
+    public User(String name, String email, String password){
         this.name = name;
+        this.email = email;
+        this.password = password;
     }
     User(User user){
         this.id = user.id;
         this.name = user.name;
+        this.email = user.email;
+        this.password = user.password;
         this.quizzes = user.quizzes;
         this.room = user.room;
     }

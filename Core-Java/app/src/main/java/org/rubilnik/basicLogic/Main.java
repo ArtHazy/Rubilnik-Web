@@ -1,22 +1,22 @@
 package org.rubilnik.basicLogic;
 
+// import org.json.JSONObject;
 import org.rubilnik.basicLogic.Quiz.Question;
 import org.rubilnik.basicLogic.users.*;
 
 public class Main {
     public static void main(String[] args) {
-        User user = new User("Joe");
+        User user = new User("Joe","joe@mail", "123");
         user.createQuiz("quiz1");
         Host host = new Host(user);
         user = null;
 
-        User user2 = new User("Mark");
-        User user3 = new User("James");
+        User user2 = new User("Mark","mark@mail", "123");
+        User user3 = new User("James", "james@mail", "123");
         Player player = new Player(user2);
         Player player2 = new Player(user3);
         user2 = null;
         user3 = null;
-
         Room room = new Room(host, host.getQuiz(0));
         var quiz = host.getQuiz(0);
         var q = quiz.addQuestion("question 1");

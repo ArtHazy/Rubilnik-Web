@@ -6,6 +6,7 @@ import org.rubilnik.basicLogic.Quiz.Question.Choice;
 
 public class Player extends User {
     public Player(User user){super(user);}
+    
 
     public void joinRoom(Room room){
         this.room = room;

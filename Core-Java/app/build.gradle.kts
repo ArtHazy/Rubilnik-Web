@@ -29,6 +29,7 @@ dependencies {
     // implementation("org.springframework:spring-websocket:6.0.13")
     implementation("org.postgresql:postgresql:42.7.3")
     implementation("org.hibernate.orm:hibernate-core:6.6.0.Final")
+    implementation("org.json:json:20240303")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
