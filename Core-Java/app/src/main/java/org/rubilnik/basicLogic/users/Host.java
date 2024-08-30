@@ -1,17 +1,24 @@
 package org.rubilnik.basicLogic.users;
 
+import org.rubilnik.basicLogic.Quiz.Question;
+import java.util.List;
+import java.util.Map.Entry;
+
+
 public class Host extends User {
     public Host(User user) {super(user);}
 
-    public void nextQuestion(){
-        if (room!=null){
-            room.next();
-        }
+
+    public Question nextQuestion() throws RuntimeException{
+        checkRoomForNull();
+        return room.next();
     }
-    public void startRoom(){
-        if (room!=null) room.start();
+    public Question startRoom() throws RuntimeException{
+        checkRoomForNull();
+        return room.start();
     }
-    public void endRoom(){
-        if (room!=null) room.end();
+    public List<Entry<Player, Integer>> endRoom() throws RuntimeException{
+        checkRoomForNull();
+        return room.end();
     }
 }

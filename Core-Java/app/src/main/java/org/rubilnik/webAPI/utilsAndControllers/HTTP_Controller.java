@@ -1,8 +1,5 @@
-package org.rubilnik.webAPI;
-import java.util.List;
+package org.rubilnik.webAPI.utilsAndControllers;
 import org.json.JSONObject;
-// import org.apache.logging.log4j.message.Message;
-import org.rubilnik.DatabaseUtil;
 import org.rubilnik.basicLogic.users.User;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +28,7 @@ public class HTTP_Controller {
         DatabaseUtil.put(user);
     }
 
+    @SuppressWarnings("rawtypes")
     @CrossOrigin("*")
     @PostMapping("/user/verify")
     ResponseEntity postUserVerification(@RequestBody String jsonString) throws Exception {
@@ -38,8 +36,8 @@ public class HTTP_Controller {
         JSONObject jsonData = new JSONObject(jsonString);
         String email = jsonData.getString("email");
         String password = jsonData.getString("password");
-        List<User> uList = DatabaseUtil.get(User.class, "password="+"'"+password+"'"+" and "+"email="+"'"+email+"';");
-        if (uList.isEmpty()){ return ResponseEntity.badRequest().build(); }
-        else {System.out.println(uList.get(0).getName()); return ResponseEntity.ok().body(uList.get(0));}
+        User user = DatabaseUtil.getFirst(User.class, "password="+"'"+password+"'"+" and "+"email="+"'"+email+"';");
+        System.out.println(user.getId()+" "+user.getName()+" ");
+        return ResponseEntity.ok().body(new JSONObject(user).toString());
     }
 }

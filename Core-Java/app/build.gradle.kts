@@ -41,12 +41,12 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "org.rubilnik.Main"
+    mainClass = "org.rubilnik.webAPI.WebAPI"
 }
 
 tasks.jar {
     manifest {
-        attributes["Main-Class"] = "org.rubilnik.Main"
+        attributes["Main-Class"] = "org.rubilnik.webAPI.WebAPI"
     }
 }
 tasks.named<Test>("test") {

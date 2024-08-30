@@ -99,10 +99,10 @@ public class Quiz {
             this.choices = list;
         }
     
-        public Choice addChoice(String title, boolean isCorrect){
+        public Question addChoice(String title, boolean isCorrect){
             var c = new Choice(title, isCorrect);
             choices.add(c);
-            return c;
+            return this;
         }
         Choice addChoice(int index, String title, boolean isCorrect){
             var c = new Choice(title, isCorrect);

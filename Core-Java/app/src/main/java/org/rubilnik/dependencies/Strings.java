@@ -1,4 +1,4 @@
-package org.rubilnik;
+package org.rubilnik.dependencies;
 
 public class Strings {
     private String greeting;
