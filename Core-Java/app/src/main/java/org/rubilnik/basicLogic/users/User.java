@@ -9,11 +9,12 @@ import org.rubilnik.basicLogic.Quiz;
 import org.rubilnik.basicLogic.Room;
 import org.rubilnik.basicLogic.interfaces.UniqueObject;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -31,7 +32,8 @@ public class User implements Serializable, UniqueObject {
     private String email;
     @Column
     private String password;
-    @JoinColumn @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
     private List<Quiz> quizzes = new LinkedList<>();
     protected Room room;
 
@@ -41,11 +43,23 @@ public class User implements Serializable, UniqueObject {
     public String getName() {
         return name;
     }
+    public void setName(String name) {
+        this.name = name;
+    }
     public String getEmail() {
         return email;
     }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public List<Quiz> getQuizzes() {
+        return quizzes;
+    }
     public String getPassword() {
         return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
     }
     public Room getRoom() {
         return room;
@@ -73,6 +87,7 @@ public class User implements Serializable, UniqueObject {
         this.quizzes = user.quizzes;
         this.room = user.room;
     }
+    
     public Player joinRoom(Room room){
         var player = new Player(this);
         room.joinUser(player);

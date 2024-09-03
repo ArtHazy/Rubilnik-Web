@@ -40,8 +40,6 @@ public class WebAPI {
         var session = webSocketSessions.remove(user);
         webSocketUsers.remove(session);
     }
-    
-
 
     public static void main(String[] args) {
         // Dependency Injection
@@ -52,28 +50,11 @@ public class WebAPI {
         
         // DatabaseUtil.test();
         try {
-            DatabaseUtil.put(new User("Pentapus","pent@mail", "123123"));
+            var u = new User("Pentapus","pent@mail", "123123");
+            u.createQuiz("test");
+            DatabaseUtil.put(u);
 
         } catch (Exception e) { e.printStackTrace(); System.err.println("Failed to put user into database");}
-        // try {
-        //     DatabaseUtil.put(new User("Pentapus","pent@mail", "123123"));
-        //     List<User> uList = DatabaseUtil.get(User.class, "email = 'pent@mail' and password = '123123'" );
-        //     System.out.println("users selected: ");
-        //     uList.forEach(user->{
-        //         System.out.println(user.getName()+" : "+user.getPassword());
-        //     });
-            
-    
-        //     System.out.println("Users: ");
-        //     for (User user : uList){
-        //         System.out.println(user.getName());
-        //     }
-        // } catch (Exception e) {
-        //     System.err.println(e);
-        //     // TODO: handle exception
-        // }
-
-
         // Spring Boot
         SpringApplication.run(HTTP_Controller.class, args);
     }

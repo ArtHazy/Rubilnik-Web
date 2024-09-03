@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 
 import { useEffect, useState } from "react"
-import { getSelf } from "../functions.mjs";
+import { getSelfFromLocalStorage } from "../functions.mjs";
 
-let self = getSelf()
+let self = getSelfFromLocalStorage()
 
 export const ViewQuestion = ({isHost, quiz, socket, roomId, quizLength}) => {
 
@@ -31,14 +31,14 @@ export const ViewQuestion = ({isHost, quiz, socket, roomId, quizLength}) => {
 
     return currentQuestion?.choices.map((choice,ind) => 
       isHost? 
-        <div className={"choice _"+ind+" "+(choice.isCorrect?"correct ":" ")+(isRevealed?"revealed ":" ")} key={JSON.stringify(choice)} 
+        <div className={"choice _"+ind+" "+(choice.correct?"correct ":" ")+(isRevealed?"revealed ":" ")} key={JSON.stringify(choice)} 
           onClick={ (!isHost && !isRevealed)? ()=>socket.emit('choice', ({roomId, userId: self.id, questionInd: currentQuestionInd, choices: [ind] })) : null }
         >
           {choice.title}
           <div className="letter">{letters[ind]}</div>
         </div>
       : 
-        <button className={"choice _"+ind+" "+(choice.isCorrect?"correct ":" ")+(isRevealed?"revealed ":" ")} key={JSON.stringify(choice)} 
+        <button className={"choice _"+ind+" "+(choice.correct?"correct ":" ")+(isRevealed?"revealed ":" ")} key={JSON.stringify(choice)} 
           onClick={ (!isHost && !isRevealed)? ()=>socket.emit('choice', ({roomId, userId: self.id, questionInd: currentQuestionInd, choices: [ind] })) : null }
         >
           {choice.title}
@@ -50,7 +50,7 @@ export const ViewQuestion = ({isHost, quiz, socket, roomId, quizLength}) => {
   function revealCorrect(){
     setIsRevealed(true)
     let correctChoicesInd = []
-    quiz?.questions[currentQuestionInd].choices.forEach((choice, index)=>{choice.isCorrect? correctChoicesInd.push(index) : null})
+    quiz?.questions[currentQuestionInd].choices.forEach((choice, index)=>{choice.correct? correctChoicesInd.push(index) : null})
     socket.emit('reveal', {roomId, correctChoicesInd})
   }
 

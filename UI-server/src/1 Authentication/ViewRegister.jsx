@@ -1,9 +1,10 @@
 import { CORE_SERVER_URL, limits } from '../values.mjs';
-import { getSelf, putSelf, validateSelfInDB } from "../functions.mjs"
+import { getSelfFromLocalStorage, putSelfInLocalStorage } from "../functions.mjs"
+import { http_post_user } from '../HTTP_requests.mjs';
 
 export const ViewRegister = () => {
 
-    if ( getSelf()?.id ) window.location.href='/'
+    if ( getSelfFromLocalStorage()?.id ) window.location.href='/'
     else return <div className='ViewRegister'>
         <div className="form">
             
@@ -20,17 +21,12 @@ export const ViewRegister = () => {
                     load.innerHTML = '/..'
                     submit.after(load)
 
-                    let username = document.getElementById('username-input').value;
+                    let name = document.getElementById('username-input').value;
                     let password = document.getElementById('password-input').value;
                     let email = document.getElementById('email-input').value;
-                    
-                    fetch(CORE_SERVER_URL+'/user', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name: username, email, password })
-                    })
-                    .then(res => { res.json().then(json =>{ console.log(json); res.ok ? ( putSelf(json), window.location.href='/', alert ('registered')) : alert('error')}) })
-                    .catch(e => { alert(e.message), load.remove(), submit.hidden = false })
+
+                    let {isOk, userId} = http_post_user({name,email,password}, ()=>{load.remove(), submit.hidden=false})
+                    if (isOk) putSelfInLocalStorage({id:userId,name,email,password}), window.location.href='/';
 
                 }}>Register</button>
             </div>

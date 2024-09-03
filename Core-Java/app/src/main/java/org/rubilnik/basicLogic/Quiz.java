@@ -1,7 +1,12 @@
 package org.rubilnik.basicLogic;
 import java.util.List;
 
+import org.json.JSONPropertyName;
+import org.rubilnik.basicLogic.interfaces.UniqueObject;
 import org.rubilnik.basicLogic.users.User;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,17 +21,17 @@ import java.util.Date;
 import java.util.LinkedList;
 
 @Entity
-public class Quiz {
+public class Quiz implements UniqueObject  {
     @Id
     @GeneratedValue
     private long id;
-    @JoinColumn
-    @ManyToOne
+    @JsonBackReference
+    @JoinColumn @ManyToOne
     private User author;
     @Column
     private String title;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
     private List<Question> questions = new LinkedList<>();
     @Column
     private Date dateCreated;
@@ -44,21 +49,34 @@ public class Quiz {
         this.author = author;
         this.dateCreated = new Date();
     }
-
+    public Long getId() {
+        return id;
+    }
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
+    }
+    // @Override
+    // public String getId() {
+    //     return String.valueOf(id);
+    // }
     public String getTitle() {
         return title;
     }
     public User getAuthor() {
         return author;
     }
-
+    public void setTitle(String title) {
+        this.title = title;
+    }
     public Question addQuestion(String title){
         var q = new Question(title, new LinkedList<>());
+        q.quiz = this;
         this.questions.add(q);
         return q;
     }
     Question addQuestion(int index, String title){
         var q = new Question(title, new LinkedList<>());
+        q.quiz = this;
         this.questions.add(index,q);
         return q;
     }
@@ -73,18 +91,25 @@ public class Quiz {
     
     @Entity
     // static for hibernate
-    public static class Question {
+    public static class Question implements UniqueObject {
         @Id 
         @GeneratedValue
         private long id;
         @Column
         private String title;
-        @JoinColumn
-        @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+        @JsonBackReference
+        @ManyToOne @JoinColumn
+        private Quiz quiz;
+        @JsonManagedReference
+        @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "question")
         private List<Choice> choices;
     
         public void setTitle(String title) {
             this.title = title;
+        }
+        @Override
+        public Long getId() {
+            return id;
         }
         public String getTitle() {
             return title;
@@ -101,11 +126,13 @@ public class Quiz {
     
         public Question addChoice(String title, boolean isCorrect){
             var c = new Choice(title, isCorrect);
+            c.question = this;
             choices.add(c);
             return this;
         }
         Choice addChoice(int index, String title, boolean isCorrect){
             var c = new Choice(title, isCorrect);
+            c.question = this;
             choices.add(index,c);
             return c;
         }
@@ -120,7 +147,7 @@ public class Quiz {
         }
     
         @Entity
-        public static class Choice {
+        public static class Choice implements UniqueObject {
             @Id
             @GeneratedValue
             private long id;
@@ -128,7 +155,13 @@ public class Quiz {
             private String title;
             @Column
             private boolean isCorrect;
-    
+            @JsonBackReference
+            @ManyToOne @JoinColumn
+            private Question question;
+
+            public Long getId() {
+                return id;
+            }
             public String getTitle() {
                 return title;
             }
@@ -144,8 +177,9 @@ public class Quiz {
                 this.title = title;
                 this.isCorrect = isCorrect;
             }
-    
-            boolean isCorrect(){return isCorrect;}
+            public boolean isCorrect() {
+                return isCorrect;
+            }
         }
     }
 

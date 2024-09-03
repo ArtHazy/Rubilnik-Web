@@ -1,23 +1,23 @@
 import { useState } from "react"
-import { getSelf, putSelf } from "../functions.mjs"
+import { getSelfFromLocalStorage, putSelfInLocalStorage } from "../functions.mjs"
 import { limits } from "../values.mjs"
 
 export const ViewJoin = () => {
-    let self = getSelf();
+    let self = getSelfFromLocalStorage();
     if (!self) self = {}
     console.log(self);
 
     return <div className="ViewJoin">
         <header>Join the game</header>
         <div className="form">
-            <vstack>name:<input id='name' type="text" value={self.name} maxLength={limits.maxNameLength} onChange={(e)=>{self.name = e.target.value, putSelf(self)}} /></vstack>
+            <vstack>name:<input id='name' type="text" value={self.name} maxLength={limits.maxNameLength} onChange={(e)=>{self.name = e.target.value, putSelfInLocalStorage(self)}} /></vstack>
             <vstack>key:<RoomKeyInput/></vstack>
             <button className="big" style={{width:"100%"}} onClick={(e)=>{navigatePlay()}}>join</button>
         </div>
     </div>
 
     function navigatePlay(){
-        putSelf(self)
+        putSelfInLocalStorage(self)
         let inputs = document.querySelector('.RoomKeyInput')
         let roomkey = ''
         inputs.childNodes.forEach((child)=>{

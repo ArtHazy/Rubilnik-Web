@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { limits } from "../values.mjs";
-import { getSelf, putSelf } from "../functions.mjs"
+import { getSelfFromLocalStorage, putSelfInLocalStorage } from "../functions.mjs"
 import { useNavigate } from "react-router-dom";
+import { http_delete_quiz, http_post_quiz } from "../HTTP_requests.mjs";
 
 
 export const ViewLibrary = () => {
-    let self = getSelf();
+    let self = getSelfFromLocalStorage();
     let quizzes = self?.quizzes
     const [flag,setFlag] = useState(false);
-    function upd(){ putSelf(self), setFlag(!flag) }
+    function upd(){ putSelfInLocalStorage(self), setFlag(!flag) }
 
     return <div className="ViewLibrary">
         <header>Your library</header>
@@ -17,11 +18,15 @@ export const ViewLibrary = () => {
                 <QuizTile quiz={q} ind={i} upd={upd} self={self} quizzes={quizzes}/>
             ): null}
             
-
             {(!quizzes || quizzes.length<limits.maxQuizzesLength)? <button id="add" onClick={()=>{
-                    Array.isArray(quizzes)? (quizzes.push({}), upd()) 
-                    :                       (self.quizzes=[], self.quizzes.push({title:'new'}), upd())
-                }}><span className="material-symbols-outlined">add</span></button>
+                let newQuiz = {title:'new quiz', questions:[]}
+                let {isOk, id} = http_post_quiz(self,newQuiz,()=>{});
+                if (isOk) {
+                    if (!Array.isArray(quizzes)) quizzes = [];
+                    quizzes.push({id,...newQuiz, isInDB:true}), upd()
+                    // Array.isArray(quizzes)? (quizzes.push({id}), upd()) : (quizzes=[], quizzes.push({}), upd())
+                }
+            }}><span className="material-symbols-outlined">add</span></button>
             : null}
         </div>
     </div>
@@ -30,8 +35,12 @@ export const ViewLibrary = () => {
 export const QuizTile = ({quiz, ind, upd, self, quizzes}) => {
     const navigate = useNavigate()
     return <div className='QuizTile'>
-        <button id="del" onClick={()=>{Array.isArray(quizzes) && confirm("delete?")? (console.log('deleted: ',quizzes.splice(ind,1)) , upd()) : null}}><span className="material-symbols-outlined">delete</span></button>
-        <button id="edit" onClick={()=>{console.log(quiz), window.location='/edit-quiz/'+ind}}> {quiz.title}</button>
+        <button id="del" onClick={()=>{ 
+            if (Array.isArray(quizzes) && confirm("delete?")){
+                if (http_delete_quiz(self,quiz.id,()=>{})) console.log('deleted: ',quizzes.splice(ind,1) , upd())
+            }
+        }}><span className="material-symbols-outlined">delete</span></button>
+        <button id="edit" onClick={()=>{console.log(quiz), window.location='/edit-quiz/'+ind}}> {quiz.title}<br/>{quiz.isInDB? null:"unsaved"}</button>
         <button id="run" onClick={()=>startRoomAsHost(self.id, quiz, ind, navigate)}><span className="material-symbols-outlined">play_arrow</span></button>
     </div>
 }

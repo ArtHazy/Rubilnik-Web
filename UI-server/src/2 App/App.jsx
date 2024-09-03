@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { ViewJoin } from "./ViewJoin";
 import { ViewLibrary } from "./ViewLibrary";
 import { ViewSelf } from "./ViewSelf";
-import { getSelf, validateSelfInDB } from "../functions.mjs"
+import { getSelfFromLocalStorage } from "../functions.mjs"
 
 export const App = () => {
   const [view, setView] = useState(<ViewLibrary/>)
 
-  if ( !getSelf()?.id ) window.location.href = "/login"
+  if ( !getSelfFromLocalStorage()?.id ) window.location.href = "/login"
   else {
     return <div className={"App"}>
       {view}

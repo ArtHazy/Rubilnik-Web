@@ -1,5 +1,6 @@
 import { useLocation, useParams } from "react-router-dom"
-import { getSelf, putSelf, validateSelfInDB } from "../functions.mjs"
+import { getSelfFromLocalStorage, putSelfInLocalStorage } from "../functions.mjs"
+import { http_user_verify } from "../HTTP_requests.mjs"
 import { io } from "socket.io-client";
 import { CORE_SERVER_URL } from "../values.mjs";
 import { ViewLobby } from "./ViewLobby";
@@ -15,8 +16,8 @@ export const Play = () => {
     const [socket, setSocket] = useState(null)
     const [joined, setJoined] = useState(false)
     const [roommates, setRoommates] = useState({})
-    const [self, setSelf] = useState(getSelf())
-    const [isAuthorized, setIsAuthorized] = useState(validateSelfInDB(self))
+    const [self, setSelf] = useState(getSelfFromLocalStorage())
+    const [isAuthorized, setIsAuthorized] = useState(http_user_verify(self))
     const isHost = state? true : false
     const gameStates = ['lobby', 'live', 'finished']
     const [gameState, setGameState] = useState(gameStates[0])
@@ -47,10 +48,10 @@ export const Play = () => {
       socket.on('end',({})=>{setUsersChoices(usersChoices_temp); setGameState(gameStates[2])})
       socket.on('joined',({roommates, guestId, quizLength, e})=>{
         console.log(quizLength);
-        setE(e); putSelf(self), setRoommates(roommates), setQuizLength(quizLength), setJoined(true)
+        setE(e); putSelfInLocalStorage(self), setRoommates(roommates), setQuizLength(quizLength), setJoined(true)
       })
       console.log('isAuthorized', isAuthorized);
-      !isAuthorized? socket.on('disconnect',()=>{ delete self.id, putSelf(self)}) : null
+      !isAuthorized? socket.on('disconnect',()=>{ delete self.id, putSelfInLocalStorage(self)}) : null
   
       // map player's choices for later evaluation
       if (isHost){

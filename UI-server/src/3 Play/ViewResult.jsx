@@ -38,7 +38,7 @@ export const ViewResult = ({usersChoices, isHost, roomId, socket, quiz, roommate
   function getCorrectChoices(){
     let correctChoices = quiz.questions.map((question)=> {
       let qCorrectChoices = []
-      question.choices.forEach((choice, index)=>{choice.isCorrect? qCorrectChoices.push(index) : null})
+      question.choices.forEach((choice, index)=>{choice.correct? qCorrectChoices.push(index) : null})
       return qCorrectChoices
     })
     return correctChoices

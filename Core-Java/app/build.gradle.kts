@@ -30,6 +30,8 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.3")
     implementation("org.hibernate.orm:hibernate-core:6.6.0.Final")
     implementation("org.json:json:20240303")
+    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.17.2")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -41,6 +43,7 @@ java {
 
 application {
     // Define the main class for the application.
+    // mainClass = "org.rubilnik.webAPI.utilsAndControllers.DatabaseUtil"
     mainClass = "org.rubilnik.webAPI.WebAPI"
 }
 
