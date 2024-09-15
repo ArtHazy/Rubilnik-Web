@@ -1,6 +1,6 @@
 
 <script>
-    let ws = new WebSocket("ws://localhost:8080/bark");
+    let ws = new WebSocket("ws://localhost:8080/socket");
     ws.onopen = ()=>{
         console.log("open")
         ws.send("bark client")

@@ -8,4 +8,7 @@ export const limits = {
     maxQuizFileSise: 1024,
 }
 
-export const CORE_SERVER_URL = 'http://localhost:8080'
+// export const CORE_SERVER_URL = 'http://localhost:8080'
+// export const CORE_SERVER_URL_WS = 'ws://localhost:8080/socket'
+export const CORE_SERVER_URL = 'http://192.168.0.137:8080'
+export const CORE_SERVER_URL_WS = 'ws://192.168.0.137:8080/socket'

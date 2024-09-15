@@ -1,0 +1,17 @@
+<script>
+    class a{
+        obj = {on_ev:()=>{console.log('event')}};
+
+
+        constructor(){
+            
+        }
+        run_ev(){
+            this.m.on_ev()
+        }
+    }
+
+    let a1 = new a();
+    a1.on_ev = ()=>{console.log('new event')}
+    a1.run_ev()
+</script>

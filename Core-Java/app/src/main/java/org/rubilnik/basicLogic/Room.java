@@ -126,23 +126,30 @@ public class Room implements Serializable{
         xUser.setRoom(null);
         if (xUser instanceof Host){
             status = STATUS_AWAIT;
+            players.remove(xUser);
         } else if (xUser instanceof Player){
             players.remove(xUser);
         }
         System.out.println(this.toString());
     }
-    public Question start(){
+    public Question start() throws RuntimeException{
         this.status = STATUS_PROGRESS;
         this.currentQuestionIndex = 0;
-        return this.quiz.getQuestions().get(currentQuestionIndex);
-    }
-    public Question next(){
-        if (currentQuestionIndex < this.quiz.getQuestions().size()-1) {
-            var nextQuestion = this.quiz.getQuestions().get(currentQuestionIndex+1);
-            return nextQuestion;
+        try {
+            return this.quiz.getQuestions().get(currentQuestionIndex);
+        } catch (IndexOutOfBoundsException e){
+            throw new RuntimeException("cant start an empty quiz");
         }
-        return null;
+    }
+    public Question next() throws RuntimeException{
+        try {
+            var nextQuestion = this.quiz.getQuestions().get(currentQuestionIndex+1);
+            currentQuestionIndex+=1;
+            return nextQuestion;
 
+        } catch (IndexOutOfBoundsException e){
+            throw new RuntimeException("no more questions in this quiz");
+        }
     }
     public List<Entry<Player, Integer>> end(){
         this.status = STATUS_COMPLETE;

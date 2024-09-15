@@ -14,7 +14,7 @@ let drop_up = <span className="material-symbols-outlined">arrow_drop_up</span>
 export const ViewQuizEdit = () => {
     const {ind} = useParams()
     const self = getSelfFromLocalStorage()
-    const quiz = self.quizzes[ind]
+    let quiz = self.quizzes[ind]
     Array.isArray(quiz.questions)? null : quiz.questions = []
     const questions = quiz.questions
     const [focus, set_focus] = useState(-1) // question focus
@@ -26,7 +26,23 @@ export const ViewQuizEdit = () => {
     return <div className="ViewQuizEdit">
         <div className="header">
             <input placeholder="quiz title" type="text" value={quiz?.title} onChange={e=>{ quiz.title = e.target.value ,upd() }}/>
-            {quiz.isInDB? null: <button id="save" onClick={()=>{if(http_put_quiz(self,quiz,()=>{})){upd(true)}}}> save </button>}
+            <div className="data">
+                <div className="dateCreated">
+                    { new Date(quiz.dateCreated).toLocaleString() }
+                </div>
+                <div className="dateLastSaved">
+                    { quiz.dateCreated==quiz.dateSaved? null : new Date(quiz.dateSaved).toLocaleString() }
+                </div>
+
+            </div>
+            
+            {quiz.isInDB? null: <button id="save" onClick={()=>{
+                const {isOk, quiz:responceQuiz} = http_put_quiz(self,quiz,()=>{})
+                
+                if(isOk){
+                    self.quizzes[ind] = responceQuiz
+                    upd(true)
+                }}}> save </button>}
             <div>questions:</div>
         </div>
         <div className="grid">
@@ -45,7 +61,7 @@ export const ViewQuizEdit = () => {
             <button onClick={()=>{downloadJson(quiz, quiz.title)}}><span class="material-symbols-outlined">download</span></button>
             <label htmlFor="file-input"><button onClick={()=>{document.getElementById("file-input").click()}} ><span class="material-symbols-outlined">upload</span></button></label>
             <input style={{display:"none"}} id="file-input" type="file" onChange={(e)=>loadQuizFromFile(e.target.files[0], quiz, upd)}/>
-            <button onClick={()=>startRoomAsHost(self.id, quiz, ind, navigate)}><span class="material-symbols-outlined">play_arrow</span></button>
+            <button onClick={()=>startRoomAsHost(navigate,quiz)}><span class="material-symbols-outlined">play_arrow</span></button>
         </Actions>
         
     </div>

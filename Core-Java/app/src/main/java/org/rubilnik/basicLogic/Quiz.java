@@ -1,12 +1,13 @@
 package org.rubilnik.basicLogic;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.json.JSONPropertyName;
 import org.rubilnik.basicLogic.interfaces.UniqueObject;
 import org.rubilnik.basicLogic.users.User;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -35,6 +36,15 @@ public class Quiz implements UniqueObject  {
     private List<Question> questions = new LinkedList<>();
     @Column
     private Date dateCreated;
+    @Column
+    private Date dateSaved;
+
+    public void setDateSaved(Date dateSaved) {
+        this.dateSaved = dateSaved;
+    }
+    public Date getDateSaved() {
+        return dateSaved;
+    }
 
     public List<Question> getQuestions() {
         return questions;
@@ -48,12 +58,17 @@ public class Quiz implements UniqueObject  {
         this.title = title;
         this.author = author;
         this.dateCreated = new Date();
+        this.dateSaved = dateCreated;
     }
+
     public Long getId() {
         return id;
     }
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+    public void setAuthor(User author) {
+        this.author = author;
     }
     // @Override
     // public String getId() {
@@ -117,6 +132,10 @@ public class Quiz implements UniqueObject  {
         public List<Choice> getChoices() {
             return choices;
         }
+        public List<Choice> getCorrectChoices(){
+            return choices.stream().filter( c->c.isCorrect() ).collect(Collectors.toList());
+        }
+
         // def for JPA
         public Question(){}
         Question(String title, List<Choice> list){
@@ -171,7 +190,6 @@ public class Quiz implements UniqueObject  {
             public void setCorrect(boolean isCorrect) {
                 this.isCorrect = isCorrect;
             }
-    
             protected Choice(){}
             Choice(String title, boolean isCorrect){
                 this.title = title;

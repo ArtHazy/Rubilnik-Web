@@ -29,7 +29,7 @@ export const ViewLogin = () => {
                         quizzes.forEach((quiz)=>{quiz.isInDB=true;})
                         user.isInDB=true;
                         console.log('user', user), putSelfInLocalStorage(user), window.location.href='/'
-                    }
+                    } else alert('failed to login')
                 }}>login</button>
             </div>
 

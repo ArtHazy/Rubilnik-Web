@@ -9,12 +9,17 @@ import javax.management.InvalidAttributeValueException;
 import org.rubilnik.basicLogic.users.*;
 
 public class BasicLogic {
-    private static Map<String,Room> rooms = new HashMap<>();
+    private static Map<String,Room> currentRooms = new HashMap<>();
     private static Set<User> users = new HashSet<>();
 
-
+    public static void putRoom(String id, Room room) {
+        currentRooms.put(id, room);
+    }
+    public static void removeRoom(String id){
+        currentRooms.remove(id);
+    }
     public static Room getRoom(String id) throws IllegalArgumentException {
-        var room = rooms.get(id);
+        var room = currentRooms.get(id);
         if (room == null) throw new IllegalArgumentException("Could not find room with id "+id);
         return room;
     }
@@ -52,15 +57,15 @@ public class BasicLogic {
     }
 
     public static void addRoom(Room room){
-        rooms.put(room.getId(), room);
+        currentRooms.put(room.getId(), room);
     }
     public static void deleteRoom(String roomId) throws InvalidAttributeValueException {
-        rooms.remove(roomId);
+        currentRooms.remove(roomId);
 
         //TODO? players.remove hosts.remove all room users? (obj1<->obj2)
     }
     public static Player joinRoom(User user, String roomId) throws InvalidAttributeValueException {
-        var room = rooms.get(roomId);
+        var room = currentRooms.get(roomId);
         if (room == null) throw new InvalidAttributeValueException("Room with id " + roomId + "wasn't found");
         var player = new Player(user);
         users.add(player);
@@ -70,7 +75,7 @@ public class BasicLogic {
 
     }
     public static void leaveRoom(User user, String roomId) throws InvalidAttributeValueException {
-        var room = rooms.get(roomId);
+        var room = currentRooms.get(roomId);
         if (room == null) throw new InvalidAttributeValueException("Room with id " + roomId + "wasn't found");
 
         users.remove(user);
@@ -79,7 +84,7 @@ public class BasicLogic {
     
     public static String listRooms(){
         var sb = new StringBuilder();
-        rooms.forEach((id, room)->{
+        currentRooms.forEach((id, room)->{
             sb.append(room.toString());
         });
         return sb.toString();

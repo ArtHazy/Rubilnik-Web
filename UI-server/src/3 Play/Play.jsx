@@ -1,80 +1,96 @@
-import { useLocation, useParams } from "react-router-dom"
 import { getSelfFromLocalStorage, putSelfInLocalStorage } from "../functions.mjs"
-import { http_user_verify } from "../HTTP_requests.mjs"
-import { io } from "socket.io-client";
-import { CORE_SERVER_URL } from "../values.mjs";
 import { ViewLobby } from "./ViewLobby";
 import { ViewQuestion } from "./ViewQuestion";
 import { ViewResult } from "./ViewResult";
 import { useEffect, useState } from "react";
-import { ViewError } from "../ViewError";
+import { ViewError, ViewLoading } from "../ViewError";
+import { WSPlayAPI } from "../WS_communication.mjs";
+import { useLocation, useParams } from "react-router-dom";
 
 export const Play = () => {
+    
+    const [socket, setSocket] = useState(null)
+    const [socketStatus, setSocketStatus] = useState('null')
+    const [roommates, setRoommates] = useState({})
+
+    const gameStates = ['lobby', 'live', 'finished']
+
     const {state} = useLocation()
     const {roomId} = useParams()
     
-    const [socket, setSocket] = useState(null)
-    const [joined, setJoined] = useState(false)
-    const [roommates, setRoommates] = useState({})
-    const [self, setSelf] = useState(getSelfFromLocalStorage())
-    const [isAuthorized, setIsAuthorized] = useState(http_user_verify(self))
-    const isHost = state? true : false
-    const gameStates = ['lobby', 'live', 'finished']
-    const [gameState, setGameState] = useState(gameStates[0])
-    const [quiz] = useState(state?.quiz)
-    const [quizLength, setQuizLength] = useState(quiz?.questions.length)
-    console.log('quizLength', quizLength);
-    const [e, setE] = useState(null)
+    const [isHost, setIsHost] = useState( Boolean(state?.quiz) ) 
+    const [gameState, setGameState] = useState(null)
     const [usersChoices, setUsersChoices] = useState({})
-  
-    if (isHost && !isAuthorized) { return <ViewError text={"You're not authorized"} />}
+
+    const [quizLength, setQuizLength] = useState(null)
+    const [currentQuestionInd, setCurrentQuestionInd] = useState(null)
+    const [currentQuestion, setCurrentQuestion] = useState(null)
+
+    const [results, setResults] = useState(null)
+
+    // console.log('state',state);
+    
     
     useEffect(() =>{
-      const usersChoices_temp = {}
-      let socket = io(CORE_SERVER_URL)
-      setSocket(socket)
-  
-      let userName = self.name
-      let userId = self.id
+      const socket = new WSPlayAPI()
 
-      socket.emit(isHost? 'create' : 'join', {roomId, userName, userId, quizLength} )
-
-      socket.on('join', ({userName, userId, roommates})=>{setRoommates(roommates)});
-      socket.on('leave', ({userName, userId, socketId, roommates})=>{setRoommates(roommates)});
-      socket.on('bark', ({msg}) => { setTimeout(()=>{alert(msg)}, 1) } );
-      socket.on('create',()=>{});
-      socket.on('start',()=>{console.log('Play got start'); setGameState(gameStates[1])})
-      // socket.on('next',()=>{console.log('Play got next'); setGameState(gameStates[1])})
-      socket.on('end',({})=>{setUsersChoices(usersChoices_temp); setGameState(gameStates[2])})
-      socket.on('joined',({roommates, guestId, quizLength, e})=>{
-        console.log(quizLength);
-        setE(e); putSelfInLocalStorage(self), setRoommates(roommates), setQuizLength(quizLength), setJoined(true)
-      })
-      console.log('isAuthorized', isAuthorized);
-      !isAuthorized? socket.on('disconnect',()=>{ delete self.id, putSelfInLocalStorage(self)}) : null
-  
-      // map player's choices for later evaluation
-      if (isHost){
-        socket.on('choice',({userId, questionInd, choices})=>{
-          !usersChoices_temp[userId]? usersChoices_temp[userId] = [] : null
-          usersChoices_temp[userId][questionInd] = choices
-          console.log('usersChoices:', usersChoices_temp)
-        })
+      socket.eventActions.open = ()=>{
+        setSocketStatus('open')
+        console.log('ishost', isHost);
+        if (isHost){
+          delete state.quiz?.isInDB
+          socket.emitCreate(getSelfFromLocalStorage(), state.quiz)
+        } else {
+          socket.emitJoin(getSelfFromLocalStorage(), roomId)
+        } 
       }
-      return () => {socket.off(), socket.disconnect();};
+      socket.eventActions.close = ()=>{setSocketStatus('closed')}
+      socket.eventActions.error = ()=>{setSocketStatus('error')}
+      socket.eventActions.create = ({roommates})=>{
+        setRoommates(roommates)
+        setSocketStatus('in room')
+        setGameState('lobby')
+      }
+      socket.eventActions.join = ({roommates})=>{
+        setRoommates(roommates);
+        setSocketStatus('in room')
+        setGameState('lobby')
+      }
+      socket.eventActions.joined = ({user, roommates})=>{
+        console.log('alert: '+user.id+":"+user.name+" has joined");
+        setRoommates(roommates)
+      }
+      socket.eventActions.left = ({user, roommates})=>{
+        console.log('alert: '+user.id+":"+user.name+" left");
+        setRoommates(roommates)
+      }
+
+      socket.eventActions.start = ({question,index,quizLength})=>{
+        setCurrentQuestion(question)
+        setCurrentQuestionInd(index)
+        setQuizLength(quizLength)
+        setGameState('live')
+      }
+      socket.eventActions.end = ({results})=>{
+        setResults(results)
+        setGameState('finished')
+      }
+      
+      setSocket(socket)
     }, []);
 
-
-    if (!socket || !socket.connected) return <ViewError code={''} text={'failed to connect to the server'}><button onClick={()=>{window.location.reload()}}>retry</button></ViewError>
-    if (e) return <ViewError code={404} text={e}/>
     
     return <div className="Play">
-      {!joined? <div> failed to join the room. Maybe it doesn't exist </div> : null}
-      {joined && gameState === gameStates[0] ? <ViewLobby isHost={isHost} socket={socket} roomId={roomId} /> : null}
-      {joined && gameState === gameStates[1] ? <ViewQuestion isHost={isHost} socket={socket} roomId={roomId} quiz={quiz} setGameState={setGameState} quizLength={quizLength}/> : null}
-      {joined && gameState === gameStates[2] ? <ViewResult isHost={isHost} socket={socket} roomId={roomId} quiz={quiz} usersChoices={usersChoices} roommates={roommates} /> : null}
+      <div>socket: {socketStatus}</div>
+      {socketStatus == 'null'? <div/> :null}
+      {socketStatus == 'closed'? <ViewError text={'connection lost'}/> : null}
+      {socketStatus == 'open'? <ViewLoading text={'cant join room'}/> : null}
       
-      {/* <button onClick={()=>{socket.emit('bark', {name: self?.name})}}>bark</button> */}
+
+      {socketStatus == 'in room' && gameState === gameStates[0] ? <ViewLobby isHost={isHost} socket={socket} roomId={roomId} /> : null}
+      {socketStatus == 'in room' && gameState === gameStates[1] ? <ViewQuestion isHost={isHost} socket={socket} roomId={roomId} setGameState={setGameState} quizLength={quizLength} setQuizLength={setQuizLength} currentQuestionInd={currentQuestionInd} setCurrentQuestionInd={setCurrentQuestionInd} currentQuestion={currentQuestion} setCurrentQuestion={setCurrentQuestion}/> : null} 
+      {socketStatus == 'in room' && gameState === gameStates[2] ? <ViewResult isHost={isHost} socket={socket} roomId={roomId} quiz={state.quiz} results={results} roommates={roommates} /> : null}
+      
       <div className="roommates-counter"> connected players: { Object.keys(roommates).length } </div>
       <div className="hstack roommates">{ Object.keys(roommates).map((userId) => <div> {roommates[userId]?.name}</div>) }</div>
     </div>

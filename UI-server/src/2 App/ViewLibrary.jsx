@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { limits } from "../values.mjs";
 import { getSelfFromLocalStorage, putSelfInLocalStorage } from "../functions.mjs"
-import { useNavigate } from "react-router-dom";
 import { http_delete_quiz, http_post_quiz } from "../HTTP_requests.mjs";
+import { WSPlayAPI } from "../WS_communication.mjs";
+import { useNavigate } from "react-router-dom";
 
 
 export const ViewLibrary = () => {
@@ -20,11 +21,10 @@ export const ViewLibrary = () => {
             
             {(!quizzes || quizzes.length<limits.maxQuizzesLength)? <button id="add" onClick={()=>{
                 let newQuiz = {title:'new quiz', questions:[]}
-                let {isOk, id} = http_post_quiz(self,newQuiz,()=>{});
+                let {isOk, quiz} = http_post_quiz(self,newQuiz,()=>{});
                 if (isOk) {
                     if (!Array.isArray(quizzes)) quizzes = [];
-                    quizzes.push({id,...newQuiz, isInDB:true}), upd()
-                    // Array.isArray(quizzes)? (quizzes.push({id}), upd()) : (quizzes=[], quizzes.push({}), upd())
+                    quizzes.push({...quiz, isInDB:true}), upd()
                 }
             }}><span className="material-symbols-outlined">add</span></button>
             : null}
@@ -34,6 +34,7 @@ export const ViewLibrary = () => {
 
 export const QuizTile = ({quiz, ind, upd, self, quizzes}) => {
     const navigate = useNavigate()
+
     return <div className='QuizTile'>
         <button id="del" onClick={()=>{ 
             if (Array.isArray(quizzes) && confirm("delete?")){
@@ -41,10 +42,14 @@ export const QuizTile = ({quiz, ind, upd, self, quizzes}) => {
             }
         }}><span className="material-symbols-outlined">delete</span></button>
         <button id="edit" onClick={()=>{console.log(quiz), window.location='/edit-quiz/'+ind}}> {quiz.title}<br/>{quiz.isInDB? null:"unsaved"}</button>
-        <button id="run" onClick={()=>startRoomAsHost(self.id, quiz, ind, navigate)}><span className="material-symbols-outlined">play_arrow</span></button>
+        <button id="run" onClick={()=>{navigate("/play", {quiz} )}} ><span className="material-symbols-outlined">play_arrow</span></button>
     </div>
 }
 
-export function startRoomAsHost(id, quiz, ind, navigate){
-    navigate(`/play/${id}`, {state: {quiz, ind}})
+/**
+ * @param {NavigateFunction} reactNavigateHookFunction
+ */
+export function startRoomAsHost(reactNavigateHookFunction, quiz){
+    reactNavigateHookFunction("/play/"+getSelfFromLocalStorage().id, {state:{quiz}})
+    // window.location.href= "/play"
 }

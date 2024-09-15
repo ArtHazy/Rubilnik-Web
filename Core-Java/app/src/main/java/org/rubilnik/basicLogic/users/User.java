@@ -7,8 +7,10 @@ import java.util.List;
 import org.rubilnik.basicLogic.IdManager;
 import org.rubilnik.basicLogic.Quiz;
 import org.rubilnik.basicLogic.Room;
+import org.rubilnik.basicLogic.Quiz.Question;
 import org.rubilnik.basicLogic.interfaces.UniqueObject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -35,6 +37,7 @@ public class User implements Serializable, UniqueObject {
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
     private List<Quiz> quizzes = new LinkedList<>();
+    @JsonIgnore
     protected Room room;
 
     public String getId() {
@@ -94,12 +97,18 @@ public class User implements Serializable, UniqueObject {
         return player;
     }
     public Room leaveRoom() {
+        var room_ = room;
         room.leaveUser(this);
-        return room;
+        return room_;
     }
     public Quiz createQuiz(String title){
         var quiz = new Quiz(this,title);
         quizzes.add(quiz);
+        return quiz;
+    }
+    public Quiz createQuiz(String title, List<Question> questions){
+        var quiz = new Quiz(this,title);
+        quiz.setQuestions(questions);
         return quiz;
     }
     public Host createRoom(Quiz quiz){
