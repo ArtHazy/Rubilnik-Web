@@ -373,7 +373,7 @@ input[type='text'],input[type='password'],input[type='email']{
  width: 100svw; 
  height: 100svh; 
  @include grid();
- grid-template-rows: 1fr, 
+ grid-template-rows: 2fr 8fr 1fr, // - for socket status ;  grid-template-rows: 1fr
 }
 
 .ViewQuestion{

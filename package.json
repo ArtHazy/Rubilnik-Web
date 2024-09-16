@@ -1,9 +1,7 @@
 {
-    "scripts": {
-      "f": "cd ./UI-server && npm run host",
-      "b": "cd ./Core-server && node app.mjs",
-      "i": "cd ./Core-server && npm install && cd ../ && cd ./UI-server && npm install",
-      "p": "cd ./Core-server && npx prisma format && npx prisma generate && npx prisma db push",
-      "s": "cd ./Core-server && npx prisma studio"
-    }
+  "scripts": {
+    "f": "cd ./UI-server && npm run host",
+    "i":"cd ./UI-server && npm i",
+    "b": "java -jar ./Core-Java/app/build/libs/app.jar"
   }
+}

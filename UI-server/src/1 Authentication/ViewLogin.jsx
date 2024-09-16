@@ -1,9 +1,10 @@
 import { CORE_SERVER_URL, limits } from '../values.mjs';
-import { getSelf, putSelf, validateSelfInDB } from "../functions.mjs"
+import { getSelfFromLocalStorage, putSelfInLocalStorage } from "../functions.mjs"
+import { http_post_user_get, http_user_verify } from '../HTTP_requests.mjs';
 
 export const ViewLogin = () => {
 
-    if ( getSelf()?.id ) window.location.href='/'
+    if ( getSelfFromLocalStorage()?.id ) window.location.href='/'
     else return <div className='ViewLogin'>
         <div className='form'>
             <hstack><div className='log accent'>LOG</div><div className='in accent'>IN</div></hstack>
@@ -20,14 +21,15 @@ export const ViewLogin = () => {
                     let email = document.getElementById('email-input').value;
                     let password = document.getElementById('password-input').value;
 
-                    fetch(CORE_SERVER_URL+'/user/verify', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({email, password})
-                    })
-                    .then(res => { res.json().then(json => { res.ok ? (putSelf(json), window.location.href='/') : alert('failure') }) })
-                    .catch(e=>{ alert(e.message) })
-                    .finally(()=>{ load.remove(), submit.hidden = false })
+                    let onLoad = () => {load.remove(), submit.hidden = false}
+
+                    let {isOk, user} = http_post_user_get({email,password}, onLoad);
+                    let quizzes = user?.quizzes
+                    if (isOk && Array.isArray(quizzes)) {
+                        quizzes.forEach((quiz)=>{quiz.isInDB=true;})
+                        user.isInDB=true;
+                        console.log('user', user), putSelfInLocalStorage(user), window.location.href='/'
+                    } else alert('failed to login')
                 }}>login</button>
             </div>
 

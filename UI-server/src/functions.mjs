@@ -1,17 +1,19 @@
 import { CORE_SERVER_URL, limits } from "./values.mjs";
 
-export function downloadObj(obj, title){
-    let file = new File([JSON.stringify(obj)],'load.json');
+export function downloadJson(json, filename){
+    let file = new File([JSON.stringify(json)],'load.json');
     let fileURL = window.URL.createObjectURL(file);
 
     var fileLink = document.createElement('a');
     fileLink.href = fileURL;
-    fileLink.download = title+'.json';
+    fileLink.download = filename+'.json';
     fileLink.click();
 }
 
-export const putSelf = (self)=>{localStorage.setItem('self', JSON.stringify(self))}
-export const removeSelf = (self)=>{localStorage.removeItem('self')}
+export const putSelfInLocalStorage = (self)=>{localStorage.setItem('self', JSON.stringify(self))}
+export const removeSelfFromLocalStorage = (self)=>{localStorage.removeItem('self')}
+export const getSelfFromLocalStorage = ()=>JSON.parse(localStorage.getItem('self'));
+
 export function putSelfInDB(self){
     let isOk
     let req = new XMLHttpRequest();
@@ -23,17 +25,7 @@ export function putSelfInDB(self){
     return isOk
 }
 
-export const getSelf = ()=>JSON.parse(localStorage.getItem('self'));
-export function validateSelfInDB(self){
-    let isOk;
-    const req = new XMLHttpRequest();
-    req.open('POST', CORE_SERVER_URL+"/user/verify", false)
-    req.setRequestHeader('Content-Type', 'application/json');
-    req.onload = ()=>{ isOk=req.status==200 }
-    req.send(JSON.stringify({email: self.email, password: self.password}));
-    console.log('isOk',isOk);
-    return isOk;
-}
+
 
 export function replaceValues(objReceiver, objGiver){
     Object.keys(objReceiver).forEach((key)=>{ delete objReceiver[key]; })

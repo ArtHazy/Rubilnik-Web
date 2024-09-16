@@ -1,77 +1,86 @@
 /* eslint-disable react/prop-types */
 
 import { useEffect, useState } from "react"
-import { getSelf } from "../functions.mjs";
+import { getSelfFromLocalStorage } from "../functions.mjs";
+import { WSPlayAPI } from "../WS_communication.mjs";
 
-let self = getSelf()
+let self = getSelfFromLocalStorage()
 
-export const ViewQuestion = ({isHost, quiz, socket, roomId, quizLength}) => {
+export const ViewQuestion = ({isHost, socket, roomId, quizLength, setQuizLength, currentQuestionInd, setCurrentQuestionInd, currentQuestion, setCurrentQuestion}) => {
 
-  const [currentQuestionInd, setCurrrentQuestionInd] = useState(0)
-  const [currentQuestion, setCurrentQuestion] = useState(quiz?.questions[currentQuestionInd])
-  const [isRevealed, setIsRevealed] = useState(false)
+  const [revealedChoices, setrevealedChoices] = useState([])
 
-  const isLastQ = (currentQuestionInd == quiz?.questions.length-1)
-  let progress = currentQuestionInd / quizLength
+  const isLastQuestion = (currentQuestionInd==quizLength-1)
 
   const [flag, setFlag] = useState(false)
   function upd(){setFlag(!flag)}
 
   useEffect(() => {
     console.log(socket);
-    isHost? setTimeout(()=>socket.emit('next',({roomId, questionInd: currentQuestionInd, question: currentQuestion })), 500)  //!
-    : null
 
-    socket.on('next',({questionInd, question})=>{console.log("VQ got next"); setIsRevealed(false),setCurrrentQuestionInd(questionInd),setCurrentQuestion(question)})
-    socket.on('reveal',({correctChoicesInd})=>{setIsRevealed(true);console.log('revealed', isRevealed);})
+    if (socket instanceof WSPlayAPI){
+      socket.eventActions.next = ({question,index,quizLength})=>{
+        console.log(question);
+        
+        setCurrentQuestion(question)
+        setCurrentQuestionInd(index)
+        setQuizLength(quizLength)
+        setrevealedChoices([]); // setIsRevealed(false)
+      }
+      socket.eventActions.reveal = ({revealedChoices})=>{
+        console.log('alert: revealed correct choices:', revealedChoices);
+        setrevealedChoices(revealedChoices)
+      }
+      socket.eventActions.choice = ({user,questionInd,choiceInd})=>{
+        console.log('alert: choice from '+user.id+":"+user.name+" Q:"+questionInd+" C:"+choiceInd);
+      }
+    }
   },[])
 
-  function renderChoices(isRevealed) {
+  function renderChoices() {
     const letters = ["A", "B", "C", "D"]
+    const isRevealed = revealedChoices.length > 0
+    let choicesToRender=[]
+    if (isRevealed) choicesToRender = revealedChoices;
+    else            choicesToRender = currentQuestion?.choices;
+    
+    console.log('revealedChoices', revealedChoices);
+    console.log('choicestorender', choicesToRender);
+    
 
-    return currentQuestion?.choices.map((choice,ind) => 
+    return choicesToRender.map((choice,ind) => 
       isHost? 
-        <div className={"choice _"+ind+" "+(choice.isCorrect?"correct ":" ")+(isRevealed?"revealed ":" ")} key={JSON.stringify(choice)} 
-          onClick={ (!isHost && !isRevealed)? ()=>socket.emit('choice', ({roomId, userId: self.id, questionInd: currentQuestionInd, choices: [ind] })) : null }
-        >
+        <div className={"choice _"+ind+" "+(choice.correct?"correct ":" ")+(isRevealed?"revealed ":" ")} key={JSON.stringify(choice)}>
           {choice.title}
           <div className="letter">{letters[ind]}</div>
         </div>
       : 
-        <button className={"choice _"+ind+" "+(choice.isCorrect?"correct ":" ")+(isRevealed?"revealed ":" ")} key={JSON.stringify(choice)} 
-          onClick={ (!isHost && !isRevealed)? ()=>socket.emit('choice', ({roomId, userId: self.id, questionInd: currentQuestionInd, choices: [ind] })) : null }
+        <button className={"choice _"+ind+" "+(choice.correct?"correct ":" ")+(isRevealed?"revealed ":" ")} key={JSON.stringify(choice)} 
+          onClick={ (!isHost && !isRevealed)? ()=>socket.emitChoice(currentQuestionInd, ind) : null }
         >
           {choice.title}
           <div className="letter">{letters[ind]}</div>
         </button>
     )
   }
-
-  function revealCorrect(){
-    setIsRevealed(true)
-    let correctChoicesInd = []
-    quiz?.questions[currentQuestionInd].choices.forEach((choice, index)=>{choice.isCorrect? correctChoicesInd.push(index) : null})
-    socket.emit('reveal', {roomId, correctChoicesInd})
-  }
-
-  if (socket && socket.connected) return (
+  if (socket instanceof WSPlayAPI && socket.isOpen()) return (
     <div className="ViewQuestion">
       <div className="head">
         <div className="title">{currentQuestion?.title}</div>
         <div className="progress">
-          <progress value={progress}></progress>
-          <div className="numbers">{currentQuestionInd+"/"+quizLength}</div>
+          {console.log(currentQuestionInd+" "+quizLength)}
+          <progress value={currentQuestionInd / quizLength}></progress>
+          <div className="numbers">{currentQuestionInd+1+"/"+quizLength}</div>
         </div>
       </div>
       <div className="body">
-        <div className="choices">{ renderChoices(isRevealed) }</div>
+        <div className="choices">{ renderChoices() }</div>
       </div>
       <div className="controls">
-        {isHost? <button onClick={()=>revealCorrect()}>reveal</button> : null}
+        {isHost? <button onClick={()=>socket.emitReveal() }>reveal</button> : null}
         {isHost? <button className="question_next_btn" onClick={()=>{
-          !isLastQ? socket.emit('next', {roomId, questionInd: currentQuestionInd+1, question: quiz.questions[currentQuestionInd+1]})
-          :         socket.emit('end', {roomId} )
-        }}> {!isLastQ? 'next' : 'end'} </button> 
+          !isLastQuestion? socket.emitNext() : socket.emitEnd()
+        }}> {!isLastQuestion? 'next' : 'end'} </button> 
         : null}
       </div>
     </div>
