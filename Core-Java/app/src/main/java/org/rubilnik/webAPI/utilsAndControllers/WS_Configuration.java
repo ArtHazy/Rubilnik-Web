@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import org.rubilnik.webAPI.WebAPI;
-import org.rubilnik.webAPI.utilsAndControllers.WS_EventJsonReplyFactory.WS_EventMessage;
 import org.rubilnik.basicLogic.BasicLogic;
 import org.rubilnik.basicLogic.Quiz;
 

@@ -8,7 +8,6 @@ import org.rubilnik.basicLogic.Quiz.Question;
 import org.rubilnik.basicLogic.Quiz.Question.Choice;
 import org.rubilnik.basicLogic.users.Player;
 import org.rubilnik.basicLogic.users.User;
-import org.rubilnik.webAPI.utilsAndControllers.HTTP_Controller.UserValidationInfo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
