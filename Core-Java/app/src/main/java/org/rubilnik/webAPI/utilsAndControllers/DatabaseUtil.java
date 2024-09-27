@@ -16,24 +16,12 @@ import org.rubilnik.basicLogic.users.User;
 
 public class DatabaseUtil {
     static SessionFactory sessionFactory;
-
     static {
         Configuration conf = new Configuration();
         conf.addAnnotatedClass(User.class);
         conf.addAnnotatedClass(Quiz.class);
         conf.addAnnotatedClass(Question.class);
         conf.addAnnotatedClass(Choice.class);
-        
-        conf.setProperty("hibernate.connection.url", System.getenv("DB_URL"));
-        conf.setProperty("hibernate.connection.username", System.getenv("DB_USERNAME"));
-        conf.setProperty("hibernate.connection.password", System.getenv("DB_PASSWORD"));
-        
-        conf.setProperty("hibernate.dialect", System.getenv("HIBERNATE_DIALECT"));
-        conf.setProperty("hibernate.show_sql", System.getenv("HIBERNATE_SHOW_SQL"));
-        conf.setProperty("hibernate.hbm2ddl.auto", System.getenv("HIBERNATE_HBM2DDL_AUTO"));
-        
-        System.out.println("MY: DB URL: "+System.getenv("DB_URL"));
-
         DatabaseUtil.sessionFactory = conf.configure().buildSessionFactory();
     }
     public static SessionFactory getSessionFactory() {

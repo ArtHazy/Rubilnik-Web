@@ -61,13 +61,13 @@ public class WebAPI {
         
         // DatabaseUtil.test();
         try {
-            if (System.getenv("HIBERNATE_HBM2DDL_AUTO").equals("create")){
-                var u = new User("admin","admin", "admin");
-                u.createQuiz("test").addQuestion("question1").addChoice("true", true).addChoice("false", false);
-                var u2 = new User("player","player", "player");
-                DatabaseUtil.put(u);
-                DatabaseUtil.put(u2);
-            }
+            var u = new User("admin","admin", "admin");
+            u.createQuiz("test").addQuestion("question1").addChoice("true", true).addChoice("false", false);
+            var u2 = new User("player","player", "player");
+            DatabaseUtil.put(u);
+            DatabaseUtil.put(u2);
+
+
         } catch (Exception e) { e.printStackTrace(); System.err.println("Failed to put user into database");}
         // Spring Boot
         SpringApplication.run(HTTP_Controller.class, args);
