@@ -2,7 +2,6 @@ package org.rubilnik.basicLogic;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.rubilnik.basicLogic.interfaces.UniqueObject;
 import org.rubilnik.basicLogic.users.User;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -17,12 +16,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 import java.util.Date;
 import java.util.LinkedList;
 
 @Entity
-public class Quiz implements UniqueObject  {
+@Table(name = "quiz")
+public class Quiz {
     @Id
     @GeneratedValue
     private long id;
@@ -32,7 +33,7 @@ public class Quiz implements UniqueObject  {
     @Column
     private String title;
     @JsonManagedReference
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "quiz")
     private List<Question> questions = new LinkedList<>();
     @Column
     private Date dateCreated;
@@ -70,10 +71,6 @@ public class Quiz implements UniqueObject  {
     public void setAuthor(User author) {
         this.author = author;
     }
-    // @Override
-    // public String getId() {
-    //     return String.valueOf(id);
-    // }
     public String getTitle() {
         return title;
     }
@@ -105,8 +102,9 @@ public class Quiz implements UniqueObject  {
     }
     
     @Entity
+    @Table(name = "question")
     // static for hibernate
-    public static class Question implements UniqueObject {
+    public static class Question {
         @Id 
         @GeneratedValue
         private long id;
@@ -122,7 +120,7 @@ public class Quiz implements UniqueObject  {
         public void setTitle(String title) {
             this.title = title;
         }
-        @Override
+
         public Long getId() {
             return id;
         }
@@ -166,7 +164,8 @@ public class Quiz implements UniqueObject  {
         }
     
         @Entity
-        public static class Choice implements UniqueObject {
+        @Table(name = "choice")
+        public static class Choice {
             @Id
             @GeneratedValue
             private long id;

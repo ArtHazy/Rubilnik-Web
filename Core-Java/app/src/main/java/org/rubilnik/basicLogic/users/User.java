@@ -8,7 +8,6 @@ import org.rubilnik.basicLogic.IdManager;
 import org.rubilnik.basicLogic.Quiz;
 import org.rubilnik.basicLogic.Room;
 import org.rubilnik.basicLogic.Quiz.Question;
-import org.rubilnik.basicLogic.interfaces.UniqueObject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -19,12 +18,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 
 @Entity
 @Table(name = "users") // "User" is reserved keyword in psql
-public class User implements Serializable, UniqueObject {
+public class User implements Serializable {
     private static IdManager idManager = new IdManager(4, null);
+    
+    public static IdManager getIdManager() {
+        return idManager;
+    }
     
     @Id
     private String id;
@@ -35,9 +39,9 @@ public class User implements Serializable, UniqueObject {
     @Column
     private String password;
     @JsonManagedReference
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "author")
     private List<Quiz> quizzes = new LinkedList<>();
-    @JsonIgnore
+    @JsonIgnore @Transient
     protected Room room;
 
     public String getId() {

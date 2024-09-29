@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 
-
 public class IdManager {
     private IdNode root;
     private int idLength;
@@ -60,6 +59,18 @@ public class IdManager {
         for (Character ch : idArray) {
             if (!idChars.contains(ch)) throw new IllegalArgumentException("ID contains prohibited values");
         }        
+    }
+
+    public void putId(String id) throws IllegalArgumentException{
+        checkIdString(id);
+        var visited = root;
+        for (char c : id.toCharArray()){
+            if (!visited.freeChildValues.contains(c)) throw new IllegalArgumentException("");
+            visited.freeChildValues.remove(Character.valueOf(c));
+            var new_ = new IdNode(c);
+            visited.children.add(new_);
+            visited = new_;
+        }
     }
 
     public String getFreeId() throws RuntimeException {
@@ -125,6 +136,8 @@ public class IdManager {
         System.out.println(tree.getFreeId());
         System.out.println(tree.getFreeId());
         System.out.println(tree.getFreeId());
+        tree.putId("BAB");
+        tree.putId("AAA");
         System.out.println(tree.getFreeId());
         System.out.println(tree.getFreeId());
         tree.deleteId("ABB");

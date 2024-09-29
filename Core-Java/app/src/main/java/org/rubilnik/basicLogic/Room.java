@@ -1,4 +1,5 @@
 package org.rubilnik.basicLogic;
+
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -15,14 +16,27 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.io.Serializable;
 import java.util.HashMap;
-// import java.util.UUID;
 import java.util.HashSet;
 
 public class Room implements Serializable{
-
+    // keeps track of the created rooms
+    private static Map<String,Room> currentRooms = new HashMap<String,Room>();
     private static String STATUS_AWAIT = "await";
     private static String STATUS_PROGRESS = "progress";
     private static String STATUS_COMPLETE = "complete";
+
+    public static Room getRoom(String id){
+        return currentRooms.get(id);
+    }
+
+    public static String listRooms(){
+        var sb = new StringBuilder();
+        currentRooms.forEach((id, room)->{
+            sb.append(room.toString());
+        });
+        return sb.toString();
+    }
+
     
     private String id;
     private Host host;
@@ -66,6 +80,9 @@ public class Room implements Serializable{
     public Room(Host host, Quiz quiz){
         this.id = host.getId();
         this.host = host;
+
+        currentRooms.put(this.id, this);
+
         host.setRoom(this);
         this.quiz = quiz;
         this.status = STATUS_AWAIT;
@@ -84,22 +101,11 @@ public class Room implements Serializable{
         });
         return sb.toString();
     }
-    String printScores(){
+    String listScores(){
         var sb = new StringBuilder();
-        if (status != STATUS_COMPLETE) return null;
-
-        var stream = calcScores();
-        stream.forEach((entry)->{
-            var player = entry.getKey();
-            var score = entry.getValue();
+        playersScores.forEach((player, score)->{
             sb.append("  ").append(player.getId()).append(" ").append(player.getName()).append(" : ").append(score).append("\n");
         });
-
-
-
-        // playersScores.forEach((player, score)->{
-        //     sb.append("  ").append(player.getId()).append(" ").append(player.getName()).append(" : ").append(score).append("\n");
-        // });
         return sb.toString();
     }
 
@@ -157,7 +163,7 @@ public class Room implements Serializable{
         return calcScores().toList();
     }
 
-    Stream<Entry<Player, Integer>>calcScores(){ // Map<Player,Integer>
+    Stream<Entry<Player, Integer>> calcScores(){ // Map<Player,Integer>
         this.playersChoices.forEach((Player player, Map<Question,Choice> choices)->{
             int score = 0;
             for (Map.Entry<Question,Choice> entry : choices.entrySet()){
@@ -169,13 +175,10 @@ public class Room implements Serializable{
         // return this.playersScores;
     }
 
-    public void regPlayerChoice(Player player, Question question, Choice choice){
+    public void registerPlayerChoice(Player player, Question question, Choice choice){
         if (status.equals(STATUS_PROGRESS)){
             if (!playersChoices.containsKey(player)) playersChoices.put(player, new HashMap<Question,Choice>());
             playersChoices.get(player).put(question, choice);
         }
     }
-
-    
-
 }
