@@ -10,6 +10,6 @@ public class Player extends User {
     
     public void choose(Question question, Choice choice) throws RuntimeException{
         checkRoomForNull();
-        room.regPlayerChoice(this, question, choice);
+        room.registerPlayerChoice(this, question, choice);
     }
 }

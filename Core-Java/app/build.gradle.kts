@@ -44,8 +44,7 @@ java {
 
 application {
     // Define the main class for the application.
-    // mainClass = "org.rubilnik.webAPI.utilsAndControllers.DatabaseUtil"
-    mainClass = "org.rubilnik.webAPI.WebAPI"
+    mainClass = "org.rubilnik.App"
 }
 
 tasks.jar {

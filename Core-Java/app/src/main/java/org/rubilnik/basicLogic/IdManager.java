@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 
-
 public class IdManager {
     private IdNode root;
     private int idLength;
@@ -55,11 +54,26 @@ public class IdManager {
     }
 
     private void checkIdString(String idString) throws IllegalArgumentException {
-        if (idString == null || idString.length() != idLength) throw new IllegalArgumentException("ID doesn't match requirements");
+        if (idString == null || idString.length() != idLength) throw new IllegalArgumentException("ID: "+idString+" doesn't match requirements");
         char[] idArray = idString.toCharArray();    
         for (Character ch : idArray) {
             if (!idChars.contains(ch)) throw new IllegalArgumentException("ID contains prohibited values");
         }        
+    }
+
+    public void putId(String id) throws IllegalArgumentException{
+        checkIdString(id);
+        var visited = root;
+        int i = 0;
+        for (char c : id.toCharArray()){
+            if (!visited.freeChildValues.contains(Character.valueOf(c))) throw new IllegalArgumentException("");
+            if (i==idLength-1) visited.freeChildValues.remove(Character.valueOf(c));
+            var new_ = new IdNode(c);
+            new_.parent = visited;
+            visited.children.add(new_);
+            visited = new_;
+            i++;
+        }
     }
 
     public String getFreeId() throws RuntimeException {
@@ -125,6 +139,8 @@ public class IdManager {
         System.out.println(tree.getFreeId());
         System.out.println(tree.getFreeId());
         System.out.println(tree.getFreeId());
+        tree.putId("BAB");
+        tree.putId("AAA");
         System.out.println(tree.getFreeId());
         System.out.println(tree.getFreeId());
         tree.deleteId("ABB");

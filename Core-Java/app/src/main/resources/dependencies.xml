@@ -10,10 +10,8 @@
     http://www.springframework.org/schema/context/spring-context.xsd">
 
     
-    <bean 
-        id="Strings"
-        class="org.rubilnik.dependencies.Strings">
-        <constructor-arg value="Hello dependency !"/>
+    <bean id="Strings" class="org.rubilnik.dependencyClasses.Strings">
+        <property name="greeting" value="Hello dependency!"></property>
     </bean>
     
 </beans>
