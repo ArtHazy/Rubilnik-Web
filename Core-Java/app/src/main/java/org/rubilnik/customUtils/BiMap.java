@@ -18,10 +18,14 @@ public class BiMap<T1,T2> {
         return map2.get(val); 
     }
 
-    public void remove1(T1 val){
-        map2.remove(map1.remove(val)); 
+    public T2 remove1(T1 val){
+        T2 res = map1.remove(val);
+        map2.remove(res);
+        return res;
     }
-    public void remove2(T2 val){
-        map1.remove(map2.remove(val));
+    public T1 remove2(T2 val){
+        T1 res = map2.remove(val);
+        map1.remove(res);
+        return res;
     }
 }

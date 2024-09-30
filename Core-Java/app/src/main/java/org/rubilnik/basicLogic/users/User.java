@@ -97,7 +97,7 @@ public class User implements Serializable {
     
     public Player joinRoom(Room room){
         var player = new Player(this);
-        room.joinUser(player);
+        room.joinPlayer(player);
         return player;
     }
     public Room leaveRoom() {

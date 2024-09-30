@@ -54,7 +54,7 @@ public class IdManager {
     }
 
     private void checkIdString(String idString) throws IllegalArgumentException {
-        if (idString == null || idString.length() != idLength) throw new IllegalArgumentException("ID doesn't match requirements");
+        if (idString == null || idString.length() != idLength) throw new IllegalArgumentException("ID: "+idString+" doesn't match requirements");
         char[] idArray = idString.toCharArray();    
         for (Character ch : idArray) {
             if (!idChars.contains(ch)) throw new IllegalArgumentException("ID contains prohibited values");
@@ -64,12 +64,15 @@ public class IdManager {
     public void putId(String id) throws IllegalArgumentException{
         checkIdString(id);
         var visited = root;
+        int i = 0;
         for (char c : id.toCharArray()){
-            if (!visited.freeChildValues.contains(c)) throw new IllegalArgumentException("");
-            visited.freeChildValues.remove(Character.valueOf(c));
+            if (!visited.freeChildValues.contains(Character.valueOf(c))) throw new IllegalArgumentException("");
+            if (i==idLength-1) visited.freeChildValues.remove(Character.valueOf(c));
             var new_ = new IdNode(c);
+            new_.parent = visited;
             visited.children.add(new_);
             visited = new_;
+            i++;
         }
     }
 

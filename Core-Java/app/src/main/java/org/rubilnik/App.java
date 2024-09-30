@@ -18,14 +18,18 @@ public class App {
         return strings;
     }
     public static void main(String[] args) {
-        // pull existing id's from database
+        // get and check existing id's from database
         var db_session = Database.getSessionFactory().openSession();
         var db_transaction = db_session.beginTransaction();
         var db_query = db_session.createNativeQuery("select * from "+Database.getTableName(User.class), User.class);
         var db_users = db_query.list();
-        db_users.forEach((user)->{
-            User.getIdManager().putId(user.getId());
-        });
+        try{
+            db_users.forEach((user)->{
+                User.getIdManager().putId(user.getId());
+            });
+        } catch (IllegalArgumentException e){
+            throw new RuntimeException("In database table "+Database.getTableName(User.class)+"\n"+e.getMessage());
+        }
         db_transaction.commit();
         db_session.close();
         User.getIdManager().log();

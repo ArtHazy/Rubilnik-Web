@@ -21,6 +21,7 @@ import java.util.HashSet;
 public class Room implements Serializable{
     // keeps track of the created rooms
     private static Map<String,Room> currentRooms = new HashMap<String,Room>();
+    
     private static String STATUS_AWAIT = "await";
     private static String STATUS_PROGRESS = "progress";
     private static String STATUS_COMPLETE = "complete";
@@ -40,7 +41,7 @@ public class Room implements Serializable{
     
     private String id;
     private Host host;
-    private Set<User> players = new HashSet<>();
+    private Set<Player> players = new HashSet<>();
     private Quiz quiz;
     private String status;
     private Map<Player,Map<Question,Choice>> playersChoices = new HashMap<>();
@@ -52,12 +53,13 @@ public class Room implements Serializable{
         users.add(host);
         return users;
     }
-    public Set<User> getPlayers() {
+    public Set<Player> getPlayers() {
         return players;
     }
     public Host getHost() {
         return host;
     }
+    
 
     @Nullable
     public Question getCurrentQuestion() {
@@ -119,7 +121,7 @@ public class Room implements Serializable{
                 "player's choices: "+printChoices()+"\n";
     }
 
-    public void joinUser(User user){
+    public void joinPlayer(Player user){
         user.setRoom(this);
         players.add(user);
         if (user instanceof Player && !playersChoices.containsKey(user)){
@@ -132,7 +134,7 @@ public class Room implements Serializable{
         xUser.setRoom(null);
         if (xUser instanceof Host){
             status = STATUS_AWAIT;
-            players.remove(xUser);
+            currentRooms.remove(this.id);
         } else if (xUser instanceof Player){
             players.remove(xUser);
         }

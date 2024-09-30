@@ -25,7 +25,7 @@ import org.rubilnik.basicLogic.Room;
 @EnableWebSocket
 public class WS_Configuration implements WebSocketConfigurer {
 
-    private static BiMap<WebSocketSession, User> userConnections;
+    private static BiMap<WebSocketSession, User> userConnections = new BiMap<WebSocketSession, User>();
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
@@ -48,10 +48,10 @@ public class WS_Configuration implements WebSocketConfigurer {
 
         private void messageTo_WS(Set<User> users, String message){
             for (User user : users){
-                messageTo_WS(user, message);
+                messageToUser_WS(user, message);
             }
         }
-        private void messageTo_WS(User user, String message){
+        private void messageToUser_WS(User user, String message){
             var text_message = new TextMessage(message);
             try {
                 var session = userConnections.get2(user);
@@ -67,12 +67,19 @@ public class WS_Configuration implements WebSocketConfigurer {
             try {
                 this.session = session;
                 User user = userConnections.get1(this.session);
+
+                if (user instanceof Host){
+                    for (Player player : user.getRoom().getPlayers()) {
+                        userConnections.remove2(player).close();
+                    }
+                }
+
                 var room = user.leaveRoom();
                 messageTo_WS(room.getUsers(), WS_ReplyFactory.onLeft(user.getId(), user.getName(), room.getUsers()) );
+
             } catch (Exception e) { System.out.println(e.getMessage());}
 
             userConnections.remove1(session);
-            System.out.println("Socket connection closed");
             super.afterConnectionClosed(session, status);
         }
         @Override
@@ -162,7 +169,7 @@ public class WS_Configuration implements WebSocketConfigurer {
                 db_session.close();
 
                 // message to users
-                messageTo_WS(player, WS_ReplyFactory.onJoin(player.getId(), player.getName(), room.getUsers()));
+                messageToUser_WS(player, WS_ReplyFactory.onJoin(player.getId(), player.getName(), room.getUsers()));
                 var otherUsers = room.getUsers();
                 otherUsers.remove(player);
                 messageTo_WS(otherUsers, WS_ReplyFactory.onJoined(player.getId(), player.getEmail(), room.getUsers()));
@@ -188,11 +195,11 @@ public class WS_Configuration implements WebSocketConfigurer {
                 var host = db_user.createRoom(bodyData.quiz);
                 userConnections.put(session, host);
 
+                var msg = WS_ReplyFactory.onCreate(host.getRoom().getUsers());
+                messageToUser_WS(host, msg );
+                
                 db_transaction.commit();
                 db_session.close();
-
-                var msg = WS_ReplyFactory.onCreate(host.getRoom().getUsers());
-                messageTo_WS(host, msg );
 
             } catch (Exception e) {
                 handle_WS_requestException(e);
@@ -257,7 +264,7 @@ public class WS_Configuration implements WebSocketConfigurer {
                 var choice = question.getChoices().get(data.choiceInd);
                 player.choose(question, choice);
                 
-                messageTo_WS(room.getHost(), WS_ReplyFactory.onChoice(user.getId(), user.getEmail(), data.questionInd, data.choiceInd));
+                messageToUser_WS(room.getHost(), WS_ReplyFactory.onChoice(user.getId(), user.getEmail(), data.questionInd, data.choiceInd));
 
             } catch (Exception e) { handle_WS_requestException(e); }
         }
