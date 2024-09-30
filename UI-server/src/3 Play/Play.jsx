@@ -89,7 +89,7 @@ export const Play = () => {
 
       {socketStatus == 'in room' && gameState === gameStates[0] ? <ViewLobby isHost={isHost} socket={socket} roomId={roomId} /> : null}
       {socketStatus == 'in room' && gameState === gameStates[1] ? <ViewQuestion isHost={isHost} socket={socket} roomId={roomId} setGameState={setGameState} quizLength={quizLength} setQuizLength={setQuizLength} currentQuestionInd={currentQuestionInd} setCurrentQuestionInd={setCurrentQuestionInd} currentQuestion={currentQuestion} setCurrentQuestion={setCurrentQuestion}/> : null} 
-      {socketStatus == 'in room' && gameState === gameStates[2] ? <ViewResult isHost={isHost} socket={socket} roomId={roomId} quiz={state.quiz} results={results} roommates={roommates} /> : null}
+      {socketStatus == 'in room' && gameState === gameStates[2] ? <ViewResult isHost={isHost} socket={socket} roomId={roomId} results={results} roommates={roommates} /> : null}
       
       <div className="roommates-counter"> connected players: { Object.keys(roommates).length } </div>
       <div className="hstack roommates">{ Object.keys(roommates).map((userId) => <div> {roommates[userId]?.name}</div>) }</div>

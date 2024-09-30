@@ -1,4 +1,4 @@
-export const ViewResult = ({/*usersChoices,*/ results, isHost, roomId, socket, quiz, roommates}) => {
+export const ViewResult = ({/*usersChoices,*/ results}) => {
 
   return (
     <div className="ViewResult">
@@ -17,13 +17,4 @@ export const ViewResult = ({/*usersChoices,*/ results, isHost, roomId, socket, q
       </div>
     </div>
   )
-
-  function getCorrectChoices(){
-    let correctChoices = quiz.questions.map((question)=> {
-      let qCorrectChoices = []
-      question.choices.forEach((choice, index)=>{choice.correct? qCorrectChoices.push(index) : null})
-      return qCorrectChoices
-    })
-    return correctChoices
-  }
 }
